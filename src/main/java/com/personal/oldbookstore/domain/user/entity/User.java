@@ -1,9 +1,10 @@
 package com.personal.oldbookstore.domain.user.entity;
 
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
@@ -15,7 +16,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String nickname;
+    private String name;
 
     @Column(nullable = false)
     private String email;
@@ -25,14 +26,14 @@ public class User {
     private Role role;
 
     @Builder
-    public User(String nickname, String email, Role role) {
-        this.nickname = nickname;
+    public User(String name, String email, Role role) {
+        this.name = name;
         this.email = email;
         this.role = role;
     }
 
     public User update(String nickname) {
-        this.nickname = nickname;
+        this.name = nickname;
 
         return this;
     }
