@@ -3,6 +3,9 @@ package com.personal.oldbookstore.util.exception;
 import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
+    //common
+    ID_NOT_FOUND("id", "id.notfound", "해당 id를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
+
     //User
     EMAIL_DUPLICATED("email", "email.duplicated", "이메일이 중복됩니다.", HttpStatus.BAD_REQUEST),
     NICKNAME_DUPLICATED("nickname", "nickname.duplicated", "닉네임이 중복됩니다.", HttpStatus.BAD_REQUEST),

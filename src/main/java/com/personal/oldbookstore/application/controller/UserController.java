@@ -1,8 +1,8 @@
 package com.personal.oldbookstore.application.controller;
 
-import com.personal.oldbookstore.domain.user.dto.UserDTO;
-import com.personal.oldbookstore.domain.user.service.UserReadService;
-import com.personal.oldbookstore.domain.user.service.UserWriteService;
+import com.personal.oldbookstore.domain.user.dto.UserRequestDto;
+import com.personal.oldbookstore.domain.user.dto.UserResponseDto;
+import com.personal.oldbookstore.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +15,11 @@ import javax.validation.Valid;
 @RequestMapping("users")
 public class UserController {
 
-    private UserWriteService userWriteService;
-
-    private UserReadService userReadService;
+    private final UserService userService;
 
     @PostMapping("")
-    public ResponseEntity<Long> join(@Valid @RequestBody UserDTO userDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(userWriteService.join(userDTO));
+    public ResponseEntity<UserResponseDto> join(@Valid @RequestBody UserRequestDto userRequestDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.join(userRequestDto));
     }
 
 

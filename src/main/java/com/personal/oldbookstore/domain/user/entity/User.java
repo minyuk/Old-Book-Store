@@ -1,5 +1,7 @@
 package com.personal.oldbookstore.domain.user.entity;
 
+import com.personal.oldbookstore.domain.user.dto.UserRequestDto;
+import com.personal.oldbookstore.domain.user.dto.UserResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,6 +47,18 @@ public class User {
         this.email = email;
         this.password = password;
         this.provider = provider;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public UserResponseDto toDto() {
+        return UserResponseDto.builder()
+                .id(id)
+                .nickname(nickname)
+                .email(email)
+                .build();
     }
 
 }

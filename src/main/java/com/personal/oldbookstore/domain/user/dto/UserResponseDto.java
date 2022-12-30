@@ -6,18 +6,16 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class UserDTO {
+public class UserResponseDto {
 
+    private Long id;
     private String nickname;
-
     private String email;
 
-    private String password;
-
     @Builder
-    public UserDTO(String nickname, String email, String password) {
+    public UserResponseDto(Long id, String nickname, String email) {
+        this.id = id;
         this.nickname = nickname;
         this.email = email;
-        this.password = password;
     }
 }

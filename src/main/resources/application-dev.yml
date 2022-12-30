@@ -27,7 +27,7 @@ spring:
     ansi:
       enabled: always
 
-logging:
-  level:
-    '[org.springframework.web]': DEBUG
-    '[org.hibernate]': DEBUG
+#logging:
+#  level:
+#    '[org.springframework.web]': DEBUG
+#    '[org.hibernate]': DEBUG
