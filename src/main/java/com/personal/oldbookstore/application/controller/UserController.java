@@ -9,12 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/users")
-public class UserApiController {
+@RequestMapping("users")
+public class UserController {
 
     private UserWriteService userWriteService;
 
