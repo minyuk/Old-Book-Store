@@ -2,6 +2,7 @@ package com.personal.oldbookstore.config.oauth;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.config.oauth.userinfo.GoogleUserInfo;
+import com.personal.oldbookstore.config.oauth.userinfo.NaverUserInfo;
 import com.personal.oldbookstore.config.oauth.userinfo.Oauth2UserInfo;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.domain.user.repository.UserRepository;
@@ -14,6 +15,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
         if (provider.equals("google")) {
             oauth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+        } else if (provider.equals("naver")) {
+            oauth2UserInfo = new NaverUserInfo(oAuth2User.getAttributes());
         }
 
         String email = oauth2UserInfo.getEmail();
