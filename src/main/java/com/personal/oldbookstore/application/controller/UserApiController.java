@@ -21,9 +21,4 @@ public class UserApiController {
     public ResponseEntity<UserResponseDto> join(@Valid @RequestBody UserRequestDto userRequestDto) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.join(userRequestDto));
     }
-
-    @PostMapping("/emailCheck/{email}")
-    public boolean emailCheck(@PathVariable String email) {
-        return userService.validateEmail(email);
-    }
 }

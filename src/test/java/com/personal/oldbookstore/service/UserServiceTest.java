@@ -29,7 +29,7 @@ public class UserServiceTest {
     @DisplayName("닉네임 수정 실패 - 이전 닉네임과 동일")
     void updateNicknameEqualPrevious() {
         //given
-        UserRequestDto request = createUser("test@abc.com", "test1!", "tester");
+        UserRequestDto request = createUser("test@abc.com", "test1!", "test1!", "tester");
         UserResponseDto response = userService.join(request);
 
         //when
@@ -55,7 +55,7 @@ public class UserServiceTest {
     @DisplayName("닉네임 수정 성공")
     void updateNickname() {
         //given
-        UserRequestDto request = createUser("test@abc.com", "test1!", "tester");
+        UserRequestDto request = createUser("test@abc.com", "test1!", "test1!", "tester");
         UserResponseDto response = userService.join(request);
 
         //when
@@ -66,15 +66,28 @@ public class UserServiceTest {
         assertThat(user.getNickname()).isEqualTo("updateTester");
     }
 
+    @Test
+    @DisplayName("회원가입 실패 - 비밀번호 불일치")
+    void joinNotEqualPassword() {
+        //given
+        UserRequestDto request = createUser("test@abc.com", "test1!", "test12345!", "tester");
+
+        //when
+
+        //then
+        assertThrows(CustomException.class, () -> {
+            userService.join(request);
+        });
+    }
 
     @Test
     @DisplayName("회원가입 실패 - 이메일 중복")
     void joinDuplicateEmail() {
         //given
-        UserRequestDto request = createUser("test@abc.com", "test1!", "tester1");
+        UserRequestDto request = createUser("test@abc.com", "test1!", "test1!", "tester1");
         userService.join(request);
 
-        UserRequestDto request2 = createUser("test@abc.com", "test123!!", "tester2");
+        UserRequestDto request2 = createUser("test@abc.com", "test123!!", "test123!!", "tester2");
 
         //when
 
@@ -89,10 +102,10 @@ public class UserServiceTest {
     @DisplayName("회원가입 실패 - 닉네임 중복")
     void joinDuplicateNickname() {
         //given
-        UserRequestDto request = createUser("test1@abc.com", "test1!", "tester");
+        UserRequestDto request = createUser("test1@abc.com", "test1!", "test1!", "tester");
         userService.join(request);
 
-        UserRequestDto request2 = createUser("test2@abc.com", "test123!!", "tester");
+        UserRequestDto request2 = createUser("test2@abc.com", "test123!!", "test123!!", "tester");
 
         //when
 
@@ -106,7 +119,7 @@ public class UserServiceTest {
     @DisplayName("회원가입 성공")
     void join() {
         //given
-        UserRequestDto request = createUser("test@abc.com", "test1!", "tester");
+        UserRequestDto request = createUser("test@abc.com", "test1!", "test1!", "tester");
 
         //when
         userService.join(request);
@@ -117,10 +130,11 @@ public class UserServiceTest {
         User user = userRepository.findByEmail("test@abc.com").orElse(null);
         assertThat(user.getNickname()).isEqualTo("tester");
     }
-    private static UserRequestDto createUser(String email, String password, String nickname) {
+    private static UserRequestDto createUser(String email, String password, String passwordConfirm, String nickname) {
         return UserRequestDto.builder()
                 .email(email)
                 .password(password)
+                .passwordConfirm(passwordConfirm)
                 .nickname(nickname)
                 .build();
     }

@@ -1,37 +1,24 @@
-
-const fields = ["email", "nickname", "password"];
-
 function registerSubmit() {
+    var data = {
+        email: $('#email').val(),
+        nickname: $('#nickname').val(),
+        password: $('#password').val(),
+        passwordConfirm : $('#passwordConfirm').val()
+    };
 
-    var email = $("#email").val();
-    var nickname = $("#nickname").val();
-    var password = $("#password").val();
-
-    fetch("/api/users", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
-            "email":email,
-            "nickname":nickname,
-            "password":password,
-        }),
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        }
-        throw new Error('Something went wrong');
-    })
-    .then((responseJson) => {
-        window.location.replace('/login')
-    })
-    .catch((error) => {
-        console.log(error)
-    })
-
+    $.ajax({
+        type: 'POST',
+        url: '/api/users',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(data)
+    }).done(function(){
+        alert('회원가입이 완료되었습니다.');
+        window.location.href = '/';
+    }).fail(function(error) {
+        alert(JSON.stringify(error["responseJSON"].message));
+    });
 }
-
-
 
 $("#email, #nickname, #password, #passwordConfirm").on("keyup", function(){
     var str = this.value.replace(" ", "");
