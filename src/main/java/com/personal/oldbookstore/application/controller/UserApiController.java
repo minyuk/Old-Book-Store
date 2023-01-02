@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("users")
+@RequestMapping("/api/users")
 public class UserApiController {
 
     private final UserService userService;
@@ -22,5 +22,8 @@ public class UserApiController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.join(userRequestDto));
     }
 
-
+    @PostMapping("/emailCheck/{email}")
+    public boolean emailCheck(@PathVariable String email) {
+        return userService.validateEmail(email);
+    }
 }

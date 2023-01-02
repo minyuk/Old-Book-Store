@@ -1,25 +1,24 @@
 package com.personal.oldbookstore.config;
 
+import com.personal.oldbookstore.config.auth.FormLoginFailureHandler;
 import com.personal.oldbookstore.config.oauth.PrincipalOauth2UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig{
 
-    @Autowired
-    private PrincipalOauth2UserService principalOauth2UserService;
-
-    @Bean
-    public BCryptPasswordEncoder encodePwd() {
-        return new BCryptPasswordEncoder();
-    }
+    private final PrincipalOauth2UserService principalOauth2UserService;
+    private final FormLoginFailureHandler formLoginFailureHandler;
 
     private final String[] whitelist = {
             "/resources/**", "/css/**", "/js/**", "/img/**",
@@ -40,8 +39,11 @@ public class SecurityConfig{
                 .and()
                     .formLogin()
                     .loginPage("/login")
+                    .usernameParameter("email")
+                    .passwordParameter("password")
                     .loginProcessingUrl("/loginProcessing")
                     .defaultSuccessUrl("/")
+                    .failureHandler(formLoginFailureHandler)
                 .and()
                     .logout()
                     .logoutUrl("/logout")
@@ -50,8 +52,8 @@ public class SecurityConfig{
                     .oauth2Login()
                     .loginPage("/login")
                     .defaultSuccessUrl("/")
-                .userInfoEndpoint()
-                .userService(principalOauth2UserService);
+                    .userInfoEndpoint()
+                    .userService(principalOauth2UserService);
 
         return http.build();
     }

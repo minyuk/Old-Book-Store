@@ -7,6 +7,8 @@ import com.personal.oldbookstore.domain.user.repository.UserRepository;
 import com.personal.oldbookstore.util.exception.CustomException;
 import com.personal.oldbookstore.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,15 +19,18 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Transactional
     public UserResponseDto join(UserRequestDto userRequestDto) {
+        String encodePassword = passwordEncoder.encode(userRequestDto.getPassword());
         validateEmail(userRequestDto.getEmail());
         validateNickname(userRequestDto.getNickname());
 
         User user = User.JoinForm()
                 .nickname(userRequestDto.getNickname())
                 .email(userRequestDto.getEmail())
-                .password(userRequestDto.getPassword())
+                .password(encodePassword)
                 .build();
 
         return userRepository.save(user).toDto();
