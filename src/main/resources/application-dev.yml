@@ -6,11 +6,13 @@ server:
       charset: utf-8
 
 spring:
+  main:
+    allow-circular-references: true
   datasource:
     url: jdbc:mysql://localhost:3306/old_book?rewriteBatchedStatements=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     username: root
     password: alsgur4316@
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     open-in-view: true
     hibernate:
@@ -25,7 +27,7 @@ spring:
     ansi:
       enabled: always
 
-logging:
-  level:
-    '[org.springframework.web]': DEBUG
-    '[org.hibernate]': DEBUG
+#logging:
+#  level:
+#    '[org.springframework.web]': DEBUG
+#    '[org.hibernate]': DEBUG
