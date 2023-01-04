@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.item.entity;
 
+import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,9 +52,10 @@ public class Item {
     private User user;
 
     @Builder
-    public Item(Long id, String name, String bookTitle, String bookAuthor, String contents, Integer stock, Integer price, Long viewCount, SaleStatus saleStatus) {
-        this.id = id;
+    public Item(User user, String name, Category category, String bookTitle, String bookAuthor, String contents, Integer stock, Integer price, Long viewCount, SaleStatus saleStatus) {
+        this.user = user;
         this.name = name;
+        this.category = category;
         this.bookTitle = bookTitle;
         this.bookAuthor = bookAuthor;
         this.contents = contents;
@@ -61,6 +63,16 @@ public class Item {
         this.price = price;
         this.viewCount = viewCount == null ? 0 : viewCount;
         this.saleStatus = saleStatus == null ? SaleStatus.SALE : saleStatus;
+    }
+
+    public void updateItem(ItemRequestDto dto) {
+        this.name = dto.name();
+        this.category = dto.category();
+        this.bookTitle = dto.bookTitle();
+        this.bookAuthor = dto.bookAuthor();
+        this.contents = dto.contents();
+        this.stock = dto.stock();
+        this.price = dto.price();
     }
 
     public void incrementViewCount() {
@@ -71,4 +83,6 @@ public class Item {
         if (stock > 0) saleStatus = SaleStatus.SALE;
         else saleStatus = SaleStatus.SOLD_OUT;
     }
+
+
 }

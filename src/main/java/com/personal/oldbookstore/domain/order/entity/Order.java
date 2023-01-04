@@ -1,13 +1,12 @@
 package com.personal.oldbookstore.domain.order.entity;
 
-import com.personal.oldbookstore.domain.item.entity.SaleStatus;
 import com.personal.oldbookstore.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
-@Table(name = "orders")
+@Table(name = "Orders")
 @Getter
 @NoArgsConstructor
 @Entity
