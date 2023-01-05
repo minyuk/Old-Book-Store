@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.domain.item.entity;
 
 import com.personal.oldbookstore.domain.base.BaseTimeEntity;
+import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
 import com.personal.oldbookstore.domain.user.entity.User;
@@ -9,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+import java.time.format.DateTimeFormatter;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -99,6 +102,19 @@ public class Item extends BaseTimeEntity {
                 .price(price)
                 .viewCount(viewCount)
                 .saleStatus(getSaleStatus().getValue())
+                .createdDate(getModifiedDate())
+                .build();
+    }
+
+    public ItemListResponseDto toDtoList() {
+        return ItemListResponseDto.builder()
+                .id(id)
+                .seller(user.getNickname())
+                .name(name)
+                .category(getCategory().getValue())
+                .viewCount(viewCount)
+                .saleStatus(getSaleStatus().getValue())
+                .createdDate(getModifiedDate())
                 .build();
     }
 

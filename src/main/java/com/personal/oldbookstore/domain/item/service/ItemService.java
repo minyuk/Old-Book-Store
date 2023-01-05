@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.item.service;
 
+import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
 import com.personal.oldbookstore.domain.item.entity.Item;
@@ -9,23 +10,30 @@ import com.personal.oldbookstore.util.exception.CustomException;
 import com.personal.oldbookstore.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class ItemService {
 
     private final ItemRepository itemRepository;
 
+    public Page<ItemListResponseDto> getList(Pageable pageable, String category, String keyword) {
+        return itemRepository.findAllBySearchOption(pageable, category, keyword).map(Item::toDtoList);
+    }
+
     public ItemResponseDto get(Long itemId) {
         Item item = findItem(itemId);
+
+        item.incrementViewCount();
 
         return item.toDto();
     }
 
-    @Transactional
     public Long create(User user, ItemRequestDto dto) {
         Item item = Item.builder()
                 .user(user)
@@ -41,7 +49,6 @@ public class ItemService {
         return itemRepository.save(item).getId();
     }
 
-    @Transactional
     public void update(Long itemId, User user, ItemRequestDto dto) {
         Item item = findItem(itemId);
 
@@ -52,7 +59,6 @@ public class ItemService {
         item.updateItem(dto);
     }
 
-    @Transactional
     public void delete(Long itemId, User user) {
         Item item = findItem(itemId);
 
@@ -64,9 +70,9 @@ public class ItemService {
     }
 
     private Item findItem(Long id) {
-        return itemRepository.findById(id).orElseThrow(() ->
-                new CustomException(ErrorCode.ID_NOT_FOUND));
+        return itemRepository.findByIdWithFetchJoinUser(id).orElseThrow(() ->
+                new CustomException(ErrorCode.ID_NOT_FOUND)
+        );
     }
-
 
 }

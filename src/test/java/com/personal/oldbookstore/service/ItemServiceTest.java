@@ -1,6 +1,8 @@
 package com.personal.oldbookstore.service;
 
+import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
+import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
@@ -13,7 +15,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,15 +46,148 @@ public class ItemServiceTest {
     }
 
     @Test
+    @DisplayName("상품 리스트 조회 - 카테고리 and 키워드 검색")
+    void getListCategoryAndKeyword() {
+        //given
+        ItemRequestDto request1 = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
+                "깨끗해요", 10, 10000);
+        ItemRequestDto request2 = createItem("알고리즘 인터뷰", "IT", "혼자 공부하는 자바", "미녁",
+                "독학하기 좋아요", 2, 8000);
+
+        itemService.create(user, request1);
+        itemService.create(user, request2);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        Page<ItemListResponseDto> items = itemService.getList(pageable, "IT", "미녁");
+
+        //then
+        assertThat(items.get().count()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("상품 리스트 조회 - 키워드(상품명 or 도서명 or 도서 저자) 검색")
+    void getListKeyword() {
+        //given
+        ItemRequestDto request1 = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
+                "깨끗해요", 10, 10000);
+        ItemRequestDto request2 = createItem("알고리즘 인터뷰", "IT", "혼자 공부하는 자바", "저자",
+                "독학하기 좋아요", 2, 8000);
+        ItemRequestDto request3 = createItem("습관 만들어요", "DEVELOPMENT", "아주 작은 습관의 힘",
+                "제임스 클리어", "가독성이 좋아요", 5, 5000);
+
+
+        itemService.create(user, request1);
+        itemService.create(user, request2);
+        itemService.create(user, request3);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        Page<ItemListResponseDto> items = itemService.getList(pageable, null, "자바");
+
+        //then
+        assertThat(items.get().count()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("상품 리스트 조회 - 카테고리")
+    void getListCategory() {
+        //given
+        ItemRequestDto request1 = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
+                "깨끗해요", 10, 10000);
+        ItemRequestDto request2 = createItem("습관 만들어요", "DEVELOPMENT", "아주 작은 습관의 힘",
+                "제임스 클리어", "가독성이 좋아요", 5, 5000);
+
+        itemService.create(user, request1);
+        itemService.create(user, request2);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        Page<ItemListResponseDto> items = itemService.getList(pageable, "IT", null);
+
+        //then
+        assertThat(items.get().count()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("상품 리스트 조회 성공")
+    void getList() {
+        //given
+        ItemRequestDto request1 = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
+                "깨끗해요", 10, 10000);
+        ItemRequestDto request2 = createItem("습관 만들어요", "DEVELOPMENT", "아주 작은 습관의 힘",
+                "제임스 클리어", "가독성이 좋아요", 5, 5000);
+
+        Long itemId = itemService.create(user, request1);
+        Long itemId2 = itemService.create(user, request2);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        Page<ItemListResponseDto> items = itemService.getList(pageable, null, null);
+
+        //then
+        assertThat(items.get().count()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("상품 상세 조회 - 조회수 증가")
+    void getIncrementViewCount() {
+        //given
+        ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
+                "깨끗해요", 2, 5000);
+        Long itemId = itemService.create(user, request);
+
+        //when
+        itemService.get(itemId);
+        itemService.get(itemId);
+        itemService.get(itemId);
+        itemService.get(itemId);
+
+        //then
+        Item item = itemRepository.findById(itemId).orElse(null);
+        assertThat(item.getViewCount()).isEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("상품 상세 조회 실패 - 존재하지 않는 상품")
+    void getNotFound() {
+        //given
+        //when
+        //then
+        assertThrows(CustomException.class, () -> {
+            itemService.get(1L);
+        });
+    }
+
+    @Test
+    @DisplayName("상품 상세 조회 성공")
+    void get() {
+        //given
+        ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
+                "깨끗해요", 2, 5000);
+        Long itemId = itemService.create(user, request);
+
+        //when
+        ItemResponseDto response = itemService.get(itemId);
+
+        //then
+        assertThat(response.name()).isEqualTo(request.name());
+    }
+
+    @Test
     @DisplayName("상품 수정 실패 - 작성자 불일치")
     void updateNotEqualUser() {
         //given
-        ItemRequestDto request = createItem("자바 팔아요", Category.IT, "Java의 정석", "남궁성",
+        ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
         Long itemId = itemService.create(user, request);
 
         User user2 = saveUser("test2@efg.com", "1111!!!", "tester2");
-        ItemRequestDto update = createItem("상품명 수정합니다", Category.IT, "Java의 정석", "남궁성",
+        ItemRequestDto update = createItem("상품명 수정합니다", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
 
         //when
@@ -61,7 +201,7 @@ public class ItemServiceTest {
     @DisplayName("상품 수정 실패 - 존재하지 않는 상품")
     void updateNotFound() {
         //given
-        ItemRequestDto request = createItem("상품명 수정합니다", Category.IT, "Java의 정석", "남궁성",
+        ItemRequestDto request = createItem("상품명 수정합니다", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
 
         //when
@@ -75,12 +215,12 @@ public class ItemServiceTest {
     @DisplayName("상품 수정 성공")
     void update() {
         //given
-        ItemRequestDto request = createItem("자바 팔아요", Category.IT, "Java의 정석", "남궁성",
+        ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
 
         Long itemId = itemService.create(user, request);
 
-        ItemRequestDto update = createItem("상품명 수정합니다", Category.IT, "Java의 정석", "남궁성",
+        ItemRequestDto update = createItem("상품명 수정합니다", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
 
         //when
@@ -95,7 +235,7 @@ public class ItemServiceTest {
     @DisplayName("상품 삭제 실패 - 작성자 불일치")
     void deleteNotEqualUser() {
         //given
-        ItemRequestDto request = createItem("자바 팔아요", Category.IT, "Java의 정석", "남궁성",
+        ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
         Long itemId = itemService.create(user, request);
 
@@ -123,7 +263,7 @@ public class ItemServiceTest {
     @DisplayName("상품 삭제 성공")
     void delete() {
         //given
-        ItemRequestDto request = createItem("자바 팔아요", Category.IT, "Java의 정석", "남궁성",
+        ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
 
         Long itemId = itemService.create(user, request);
@@ -139,7 +279,7 @@ public class ItemServiceTest {
     @DisplayName("상품 등록 성공")
     void create() {
         //given
-        ItemRequestDto request = createItem("자바 팔아요", Category.IT, "Java의 정석", "남궁성",
+        ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
 
         //when
@@ -161,11 +301,11 @@ public class ItemServiceTest {
                 .build());
     }
 
-    private ItemRequestDto createItem(String name, Category category, String bookTitle, String bookAuthor,
+    private ItemRequestDto createItem(String name, String category, String bookTitle, String bookAuthor,
                             String contents, Integer stock, Integer price) {
         return ItemRequestDto.builder()
                 .name(name)
-                .category(category)
+                .category(Category.valueOf(category))
                 .bookTitle(bookTitle)
                 .bookAuthor(bookAuthor)
                 .contents(contents)
