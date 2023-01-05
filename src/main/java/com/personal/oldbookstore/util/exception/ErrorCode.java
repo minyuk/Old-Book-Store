@@ -14,6 +14,10 @@ public enum ErrorCode {
     PASSWORD_EQUAL_PREVIOUS("newPassword", "password.equal.previous", "기존 비밀번호와 새 비밀번호가 일치합니다.", HttpStatus.BAD_REQUEST),
     EMAIL_NOT_FOUND("email", "email.notFound", "해당 이메일을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
     NICKNAME_NOT_EQUAL("nickname", "nickname.notEqual", "닉네임이 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+
+    //item
+    EDIT_ACCESS_DENIED("edit", "edit.access.denied", "수정 권한이 없습니다.", HttpStatus.BAD_REQUEST),
+    DELETE_ACCESS_DENIED("delete", "delete.access.denied", "삭제 권한이 없습니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private String cause;

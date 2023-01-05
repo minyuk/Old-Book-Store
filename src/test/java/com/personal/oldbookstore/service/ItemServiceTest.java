@@ -8,6 +8,7 @@ import com.personal.oldbookstore.domain.item.service.ItemService;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.domain.user.repository.UserRepository;
 import com.personal.oldbookstore.util.exception.CustomException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,35 @@ public class ItemServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    private User user;
+
+    @BeforeEach
+    void createUser() {
+        user = saveUser("test@abc.com", "1234!@", "tester");
+    }
+
+    @Test
+    @DisplayName("상품 수정 실패 - 작성자 불일치")
+    void updateNotEqualUser() {
+        //given
+        ItemRequestDto request = createItem("자바 팔아요", Category.IT, "Java의 정석", "남궁성",
+                "깨끗해요", 2, 5000);
+        Long itemId = itemService.create(user, request);
+
+        User user2 = saveUser("test2@efg.com", "1111!!!", "tester2");
+        ItemRequestDto update = createItem("상품명 수정합니다", Category.IT, "Java의 정석", "남궁성",
+                "깨끗해요", 2, 5000);
+
+        //when
+        //then
+        assertThrows(CustomException.class, () -> {
+           itemService.update(itemId, user2, update);
+        });
+    }
+
     @Test
     @DisplayName("상품 수정 실패 - 존재하지 않는 상품")
-    void updateNotFoundId() {
+    void updateNotFound() {
         //given
         ItemRequestDto request = createItem("상품명 수정합니다", Category.IT, "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
@@ -40,7 +67,7 @@ public class ItemServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            itemService.update(1L, request);
+            itemService.update(1L, user, request);
         });
     }
 
@@ -48,7 +75,6 @@ public class ItemServiceTest {
     @DisplayName("상품 수정 성공")
     void update() {
         //given
-        User user = createUser();
         ItemRequestDto request = createItem("자바 팔아요", Category.IT, "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
 
@@ -58,7 +84,7 @@ public class ItemServiceTest {
                 "깨끗해요", 2, 5000);
 
         //when
-        itemService.update(itemId, update);
+        itemService.update(itemId, user, update);
 
         //then
         Item item = itemRepository.findById(itemId).orElse(null);
@@ -66,10 +92,53 @@ public class ItemServiceTest {
     }
 
     @Test
+    @DisplayName("상품 삭제 실패 - 작성자 불일치")
+    void deleteNotEqualUser() {
+        //given
+        ItemRequestDto request = createItem("자바 팔아요", Category.IT, "Java의 정석", "남궁성",
+                "깨끗해요", 2, 5000);
+        Long itemId = itemService.create(user, request);
+
+        User user2 = saveUser("test2@efg.com", "1111!!!", "tester2");
+
+        //when
+        //then
+        assertThrows(CustomException.class, () -> {
+           itemService.delete(itemId, user2);
+        });
+    }
+
+    @Test
+    @DisplayName("상품 삭제 실패 - 존재하지 않는 상품")
+    void deleteNotFound() {
+        //given
+        //when
+        //then
+        assertThrows(CustomException.class, () -> {
+            itemService.delete(1L, user);
+        });
+    }
+
+    @Test
+    @DisplayName("상품 삭제 성공")
+    void delete() {
+        //given
+        ItemRequestDto request = createItem("자바 팔아요", Category.IT, "Java의 정석", "남궁성",
+                "깨끗해요", 2, 5000);
+
+        Long itemId = itemService.create(user, request);
+
+        //when
+        itemService.delete(itemId, user);
+
+        //then
+        assertThat(itemRepository.count()).isEqualTo(0);
+    }
+
+    @Test
     @DisplayName("상품 등록 성공")
     void create() {
         //given
-        User user = createUser();
         ItemRequestDto request = createItem("자바 팔아요", Category.IT, "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
 
@@ -84,11 +153,11 @@ public class ItemServiceTest {
         assertThat(item.getPrice()).isEqualTo(5000);
     }
 
-    private User createUser() {
+    private User saveUser(String email, String password, String nickname) {
         return userRepository.save(User.JoinForm()
-                .email("test@abc.com")
-                .password("1234!")
-                .nickname("tester")
+                .email(email)
+                .password(password)
+                .nickname(nickname)
                 .build());
     }
 
