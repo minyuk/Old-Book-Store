@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.comment.entity;
 
+import com.personal.oldbookstore.domain.base.BaseTimeEntity;
 import com.personal.oldbookstore.util.BooleanConverter;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Comment {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

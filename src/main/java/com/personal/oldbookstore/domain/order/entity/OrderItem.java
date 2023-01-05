@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.order.entity;
 
+import com.personal.oldbookstore.domain.base.BaseTimeEntity;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
-public class OrderItem {
+public class OrderItem extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

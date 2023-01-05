@@ -1,6 +1,8 @@
 package com.personal.oldbookstore.domain.item.entity;
 
+import com.personal.oldbookstore.domain.base.BaseTimeEntity;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
+import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
 import com.personal.oldbookstore.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +15,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Item {
+public class Item extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,6 +67,15 @@ public class Item {
         this.saleStatus = saleStatus == null ? SaleStatus.SALE : saleStatus;
     }
 
+    public void incrementViewCount() {
+        viewCount += 1;
+    }
+
+    public void updateSaleStatus() {
+        if (stock > 0) saleStatus = SaleStatus.SALE;
+        else saleStatus = SaleStatus.SOLD_OUT;
+    }
+
     public void updateItem(ItemRequestDto dto) {
         this.name = dto.name();
         this.category = dto.category();
@@ -75,14 +86,23 @@ public class Item {
         this.price = dto.price();
     }
 
-    public void incrementViewCount() {
-        viewCount += 1;
+    public ItemResponseDto toDto() {
+        return ItemResponseDto.builder()
+                .id(id)
+                .seller(user.getNickname())
+                .name(name)
+                .category(getCategory().getValue())
+                .bookTitle(bookTitle)
+                .bookAuthor(bookAuthor)
+                .contents(contents)
+                .stock(stock)
+                .price(price)
+                .viewCount(viewCount)
+                .saleStatus(getSaleStatus().getValue())
+                .build();
     }
 
-    public void updateSaleStatus() {
-        if (stock > 0) saleStatus = SaleStatus.SALE;
-        else saleStatus = SaleStatus.SOLD_OUT;
-    }
+
 
 
 }

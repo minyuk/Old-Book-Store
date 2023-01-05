@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.like.entity;
 
+import com.personal.oldbookstore.domain.base.BaseTimeEntity;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.user.entity.User;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
-public class LikeItem {
+public class LikeItem extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

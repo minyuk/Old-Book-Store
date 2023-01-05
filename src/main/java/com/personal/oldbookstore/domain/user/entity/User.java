@@ -1,6 +1,6 @@
 package com.personal.oldbookstore.domain.user.entity;
 
-import com.personal.oldbookstore.domain.user.dto.UserRequestDto;
+import com.personal.oldbookstore.domain.base.BaseTimeEntity;
 import com.personal.oldbookstore.domain.user.dto.UserResponseDto;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter @ToString
 @NoArgsConstructor
 @Entity
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
