@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/items")
 @RestController
@@ -35,7 +37,7 @@ public class ItemApiController {
 
     @PostMapping("")
     public ResponseEntity<Long> create(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                       @RequestBody ItemRequestDto dto) {
+                                       @Valid @RequestBody ItemRequestDto dto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(itemService.create(principalDetails.getUser(), dto));
     }
@@ -43,7 +45,7 @@ public class ItemApiController {
     @PatchMapping("{itemId}")
     public void update(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails,
-                       @RequestBody ItemRequestDto dto) {
+                       @Valid @RequestBody ItemRequestDto dto) {
         itemService.update(itemId,principalDetails.getUser(), dto);
     }
 

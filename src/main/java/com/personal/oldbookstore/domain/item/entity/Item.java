@@ -5,6 +5,8 @@ import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
 import com.personal.oldbookstore.domain.user.entity.User;
+import com.personal.oldbookstore.util.exception.CustomException;
+import com.personal.oldbookstore.util.exception.ErrorCode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -72,6 +74,19 @@ public class Item extends BaseTimeEntity {
 
     public void incrementViewCount() {
         viewCount += 1;
+    }
+
+    public void decreaseStock(int orderQuantity) {
+        int rest = stock - orderQuantity;
+        if (rest < 0) {
+            throw new CustomException(ErrorCode.STOCK_FAIL);
+        }
+
+        stock = rest;
+    }
+
+    public void incrementStock(int cancelQuantity) {
+        stock += cancelQuantity;
     }
 
     public void updateSaleStatus() {

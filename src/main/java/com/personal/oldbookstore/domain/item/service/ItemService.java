@@ -69,7 +69,7 @@ public class ItemService {
         itemRepository.delete(item);
     }
 
-    private Item findItem(Long id) {
+    public Item findItem(Long id) {
         return itemRepository.findByIdWithFetchJoinUser(id).orElseThrow(() ->
                 new CustomException(ErrorCode.ID_NOT_FOUND)
         );

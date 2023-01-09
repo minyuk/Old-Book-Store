@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "Orders")
 @Getter
@@ -24,8 +27,9 @@ public class Order extends BaseTimeEntity {
     @Column(length = 11, nullable = false)
     private String phone;
 
+    @Embedded
     @Column(nullable = false)
-    private String address;
+    private Address address;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -34,17 +38,44 @@ public class Order extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    @Column(nullable = false)
+    private LocalDateTime orderDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems = new ArrayList<>();
+
     @Builder
-    public Order(Long id, String recipient, String phone, String address, Payment payment, OrderStatus orderStatus) {
-        this.id = id;
+    public Order(User user, List<OrderItem> orderItems, String recipient, String phone, Address address,
+                 Payment payment, OrderStatus orderStatus, LocalDateTime orderDate) {
+        this.user = user;
+        addOrderItem(orderItems);
         this.recipient = recipient;
         this.phone = phone;
         this.address = address;
         this.payment = payment;
         this.orderStatus = orderStatus == null ? OrderStatus.ORDER : orderStatus;
+        this.orderDate = orderDate == null ? LocalDateTime.now() : orderDate;
     }
+
+    public int getTotalPrice() {
+        int totalPrice = 0;
+        for (OrderItem orderItem : orderItems) {
+            totalPrice += orderItem.getOrderPrice();
+        }
+        return totalPrice;
+    }
+
+    private void addOrderItem (List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+        for (OrderItem orderItem : orderItems) {
+            orderItem.setOrder(this);
+        }
+    }
+
+
+
 }
