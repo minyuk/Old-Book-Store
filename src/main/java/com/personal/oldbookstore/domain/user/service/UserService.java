@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.user.service;
 
+import com.personal.oldbookstore.domain.user.dto.UserNicknameDto;
 import com.personal.oldbookstore.domain.user.dto.UserRequestDto;
 import com.personal.oldbookstore.domain.user.dto.UserResponseDto;
 import com.personal.oldbookstore.domain.user.entity.User;
@@ -21,16 +22,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserResponseDto join(UserRequestDto userRequestDto) {
-        validateEmail(userRequestDto.getEmail());
-        validateNickname(userRequestDto.getNickname());
-        validatePassword(userRequestDto.getPassword(), userRequestDto.getPasswordConfirm());
+    public UserResponseDto join(UserRequestDto dto) {
+        validateEmail(dto.getEmail());
+        validateNickname(dto.getNickname());
+        validatePassword(dto.getPassword(), dto.getPasswordConfirm());
 
-        String encodePassword = passwordEncoder.encode(userRequestDto.getPassword());
+        String encodePassword = passwordEncoder.encode(dto.getPassword());
 
         User user = User.JoinForm()
-                .nickname(userRequestDto.getNickname())
-                .email(userRequestDto.getEmail())
+                .nickname(dto.getNickname())
+                .email(dto.getEmail())
                 .password(encodePassword)
                 .build();
 
@@ -38,18 +39,18 @@ public class UserService {
     }
 
     @Transactional
-    public void updateNickname(Long userId, String nickname) {
+    public void updateNickname(Long userId, UserNicknameDto dto) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new CustomException(ErrorCode.ID_NOT_FOUND)
         );
 
-        validateNickname(nickname);
+        validateNickname(dto.nickname());
 
-        if (user.getNickname().equals(nickname)) {
+        if (user.getNickname().equals(dto.nickname())) {
             throw new CustomException(ErrorCode.NICKNAME_EQUAL_PREVIOUS);
         }
 
-        user.updateNickname(nickname);
+        user.updateNickname(dto.nickname());
     }
 
     private void validateEmail(String email) {

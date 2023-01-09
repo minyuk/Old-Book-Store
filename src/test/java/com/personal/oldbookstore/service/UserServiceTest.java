@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.service;
 
+import com.personal.oldbookstore.domain.user.dto.UserNicknameDto;
 import com.personal.oldbookstore.domain.user.dto.UserRequestDto;
 import com.personal.oldbookstore.domain.user.dto.UserResponseDto;
 import com.personal.oldbookstore.domain.user.entity.User;
@@ -36,7 +37,7 @@ public class UserServiceTest {
 
         //then
         assertThrows(CustomException.class, () -> {
-            userService.updateNickname(response.getId(), "tester");
+            userService.updateNickname(response.getId(), new UserNicknameDto("tester"));
         });
     }
 
@@ -47,7 +48,7 @@ public class UserServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            userService.updateNickname(1L, "updateTester");
+            userService.updateNickname(1L, new UserNicknameDto("tester"));
         });
     }
 
@@ -59,7 +60,7 @@ public class UserServiceTest {
         UserResponseDto response = userService.join(request);
 
         //when
-        userService.updateNickname(response.getId(), "updateTester");
+        userService.updateNickname(response.getId(), new UserNicknameDto("updateTester"));
 
         //then
         User user = userRepository.findById(response.getId()).orElse(null);
