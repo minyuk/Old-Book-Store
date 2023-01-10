@@ -42,13 +42,13 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
 
     @Override
     public Optional<Item> findByIdWithFetchJoinUser(Long id) {
-        Item item = queryFactory.selectFrom(QItem.item)
-                .join(QItem.item.user, user)
+        Item findItem = queryFactory.selectFrom(item)
+                .join(item.user, user)
                 .fetchJoin()
-                .where(QItem.item.id.eq(id))
+                .where(item.id.eq(id))
                 .fetchOne();
 
-        return Optional.ofNullable(item);
+        return Optional.ofNullable(findItem);
     }
 
     private BooleanExpression containsKeyword(String keyword) {

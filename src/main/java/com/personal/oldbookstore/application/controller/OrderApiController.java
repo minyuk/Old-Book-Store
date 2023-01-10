@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -21,6 +18,11 @@ import javax.validation.Valid;
 public class OrderApiController {
 
     private final OrderService orderService;
+
+    @PostMapping("/{orderId}")
+    public void cancel(@PathVariable Long orderId) {
+        orderService.cancel(orderId);
+    }
 
     @PostMapping("")
     public ResponseEntity<Long> create(@AuthenticationPrincipal PrincipalDetails principalDetails,

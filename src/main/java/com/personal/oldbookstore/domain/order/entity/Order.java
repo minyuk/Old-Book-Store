@@ -61,6 +61,14 @@ public class Order extends BaseTimeEntity {
         this.orderDate = orderDate == null ? LocalDateTime.now() : orderDate;
     }
 
+    public void cancel() {
+        this.orderStatus = OrderStatus.CANCEL;
+
+        for(OrderItem orderItem : orderItems) {
+            orderItem.cancel();
+        }
+    }
+
     public int getTotalPrice() {
         int totalPrice = 0;
         for (OrderItem orderItem : orderItems) {

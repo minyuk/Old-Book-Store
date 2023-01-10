@@ -43,6 +43,7 @@ public class OrderItem extends BaseTimeEntity {
 
     public void cancel() {
         getItem().incrementStock(count);
+        getItem().updateSaleStatus();
     }
 
 

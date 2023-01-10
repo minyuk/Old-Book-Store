@@ -8,6 +8,8 @@ import com.personal.oldbookstore.domain.order.entity.Order;
 import com.personal.oldbookstore.domain.order.entity.OrderItem;
 import com.personal.oldbookstore.domain.order.repository.OrderRepository;
 import com.personal.oldbookstore.domain.user.entity.User;
+import com.personal.oldbookstore.util.exception.CustomException;
+import com.personal.oldbookstore.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,12 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemService itemService;
 
+    public void cancel(Long orderId) {
+        Order order = findOrder(orderId);
+
+        order.cancel();
+    }
+
     public Long create(User user, OrderRequestDto dto) {
 
         List<OrderItem> orderItems = createOrderItems(dto);
@@ -37,6 +45,12 @@ public class OrderService {
                 .build();
 
         return orderRepository.save(order).getId();
+    }
+
+    private Order findOrder(Long id) {
+        return orderRepository.findByIdWithFetchJoinOrderItem(id).orElseThrow(() ->
+                new CustomException(ErrorCode.ID_NOT_FOUND)
+        );
     }
 
     private List<OrderItem> createOrderItems(OrderRequestDto dto) {
