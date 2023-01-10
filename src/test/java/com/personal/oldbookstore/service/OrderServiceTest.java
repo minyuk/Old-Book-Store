@@ -1,0 +1,200 @@
+package com.personal.oldbookstore.service;
+
+import com.personal.oldbookstore.domain.item.entity.Category;
+import com.personal.oldbookstore.domain.item.entity.Item;
+import com.personal.oldbookstore.domain.item.entity.SaleStatus;
+import com.personal.oldbookstore.domain.item.repository.ItemRepository;
+import com.personal.oldbookstore.domain.order.dto.OrderItemRequestDto;
+import com.personal.oldbookstore.domain.order.dto.OrderRequestDto;
+import com.personal.oldbookstore.domain.order.entity.Order;
+import com.personal.oldbookstore.domain.order.entity.OrderStatus;
+import com.personal.oldbookstore.domain.order.entity.Payment;
+import com.personal.oldbookstore.domain.order.repository.OrderItemRepository;
+import com.personal.oldbookstore.domain.order.repository.OrderRepository;
+import com.personal.oldbookstore.domain.order.service.OrderService;
+import com.personal.oldbookstore.domain.user.entity.User;
+import com.personal.oldbookstore.domain.user.repository.UserRepository;
+import com.personal.oldbookstore.util.exception.CustomException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+
+@SpringBootTest
+@Transactional
+public class OrderServiceTest {
+
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+    @Autowired
+    private ItemRepository itemRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    private User user;
+    private Item item1, item2, item3;
+    private List<OrderItemRequestDto> orderItemRequestDtos = new ArrayList<>();
+
+    @BeforeEach
+    void createUserWithItem() {
+        user = saveUser("test@abc.com", "1234!@", "tester");
+        item1 = saveItem(user, "습관 만들어요", "DEVELOPMENT", "아주 작은 습관의 힘", "제임스 클리어", "미개봉 제품", 100, 6000);
+        item2 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 1, 10000);
+    }
+
+    @Test
+    @DisplayName("상품 주문 실패 - 재고 부족")
+    void OrderFailStock() {
+        //given
+        OrderItemRequestDto orderItemDto = createOrderItemDto(item1.getId(), 1000);
+        orderItemRequestDtos.add(orderItemDto);
+
+        OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
+
+        //when
+        //then
+        assertThrows(CustomException.class, () -> {
+            orderService.create(user, request);
+        });
+    }
+
+    @Test
+    @DisplayName("상품 주문 성공 - 주문 상태 변경")
+    void OrderUpdateOrderStatus() {
+        //given
+        OrderItemRequestDto orderItemDto = createOrderItemDto(item1.getId(), 1);
+        orderItemRequestDtos.add(orderItemDto);
+
+        OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
+
+        //when
+        Long orderId = orderService.create(user, request);
+
+        //then
+        Order order = orderRepository.findById(orderId).orElse(null);
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.ORDER);
+    }
+
+    @Test
+    @DisplayName("상품 주문 성공 - 상품 상태 변경")
+    void OrderUpdateSaleStatus() {
+        //given
+        OrderItemRequestDto orderItemDto = createOrderItemDto(item2.getId(), 1);
+        orderItemRequestDtos.add(orderItemDto);
+
+        OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
+
+        //when
+        orderService.create(user, request);
+
+        //then
+        assertThat(item2.getSaleStatus()).isEqualTo(SaleStatus.SOLD_OUT);
+    }
+
+    @Test
+    @DisplayName("상품 주문 성공 - 상품 재고 감소")
+    void OrderDecreaseStock() {
+        //given
+        OrderItemRequestDto orderItemDto = createOrderItemDto(item1.getId(), 1);
+        orderItemRequestDtos.add(orderItemDto);
+
+        OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
+
+        //when
+        orderService.create(user, request);
+
+        //then
+        assertThat(item1.getStock()).isEqualTo(99);
+    }
+
+    @Test
+    @DisplayName("상품 주문 성공 - 상품 여러 개")
+    void OrderManyItem() {
+        //given
+        OrderItemRequestDto orderItemDto1 = createOrderItemDto(item1.getId(), 2);
+        orderItemRequestDtos.add(orderItemDto1);
+        OrderItemRequestDto orderItemDto2 = createOrderItemDto(item2.getId(), 1);
+        orderItemRequestDtos.add(orderItemDto2);
+
+        OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
+
+        //when
+        Long orderId = orderService.create(user, request);
+
+        //then
+        assertThat(orderItemRepository.count()).isEqualTo(2);
+        assertThat(orderRepository.count()).isEqualTo(1);
+
+        Order order = orderRepository.findById(orderId).orElse(null);
+        assertThat(order.getRecipient()).isEqualTo("tester");
+    }
+
+    @Test
+    @DisplayName("상품 주문 성공 - 상품 한 개")
+    void OrderOneItem() {
+        //given
+        OrderItemRequestDto orderItemDto = createOrderItemDto(item1.getId(), 2);
+        orderItemRequestDtos.add(orderItemDto);
+
+        OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
+
+        //when
+        Long orderId = orderService.create(user, request);
+
+        //then
+        assertThat(orderItemRepository.count()).isEqualTo(1);
+        assertThat(orderRepository.count()).isEqualTo(1);
+
+        Order order = orderRepository.findById(orderId).orElse(null);
+        assertThat(order.getRecipient()).isEqualTo("tester");
+    }
+    private OrderItemRequestDto createOrderItemDto(Long itemId, Integer count) {
+        return new OrderItemRequestDto(itemId, count);
+    }
+
+    private OrderRequestDto createOrderDto(List<OrderItemRequestDto> items, String recipient, String phone, String payment) {
+        return OrderRequestDto.builder()
+                .orderItems(items)
+                .recipient(recipient)
+                .phone(phone)
+                .address(null)
+                .payment(Payment.valueOf(payment))
+                .build();
+    }
+
+    private Item saveItem(User user, String name, String category, String bookTitle, String bookAuthor,
+                                      String contents, Integer stock, Integer price) {
+        return itemRepository.save(Item.builder()
+                .user(user)
+                .name(name)
+                .category(Category.valueOf(category))
+                .bookTitle(bookTitle)
+                .bookAuthor(bookAuthor)
+                .contents(contents)
+                .stock(stock)
+                .price(price)
+                .build());
+    }
+
+    private User saveUser(String email, String password, String nickname) {
+        return userRepository.save(User.JoinForm()
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .build());
+    }
+
+}
