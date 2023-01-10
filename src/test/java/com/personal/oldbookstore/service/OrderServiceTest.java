@@ -20,6 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -56,8 +57,67 @@ public class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("주문 취소 성공 - 상품 여러 개, 상품 상태 변경")
+    void cancelManyItemWithUpdateSaleStatus() {
+        //given
+        OrderItemRequestDto orderItemDto1 = createOrderItemDto(item1.getId(), 10);
+        orderItemRequestDtos.add(orderItemDto1);
+        OrderItemRequestDto orderItemDto2 = createOrderItemDto(item2.getId(), 1);
+        orderItemRequestDtos.add(orderItemDto2);
+
+        OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
+        Long orderId = orderService.create(user, request);
+
+        //when
+        orderService.cancel(orderId);
+
+        //then
+        assertThat(item1.getSaleStatus()).isEqualTo(SaleStatus.SALE);
+        assertThat(item2.getSaleStatus()).isEqualTo(SaleStatus.SALE);
+    }
+
+    @Test
+    @DisplayName("주문 취소 성공 - 상품 여러 개, 상품 재고 증가")
+    void cancelManyItemWithIncrementStock() {
+        //given
+        OrderItemRequestDto orderItemDto1 = createOrderItemDto(item1.getId(), 10);
+        orderItemRequestDtos.add(orderItemDto1);
+        OrderItemRequestDto orderItemDto2 = createOrderItemDto(item2.getId(), 1);
+        orderItemRequestDtos.add(orderItemDto2);
+
+        OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
+        Long orderId = orderService.create(user, request);
+
+        //when
+        orderService.cancel(orderId);
+
+        //then
+        assertThat(item1.getStock()).isEqualTo(100);
+        assertThat(item2.getStock()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("주문 취소 성공 - 주문 목록 삭제하지 않고 주문 상태 변경")
+    void cancelNotDeleteWithUpdateOrderStatus() {
+        //given
+        OrderItemRequestDto orderItemDto = createOrderItemDto(item1.getId(), 10);
+        orderItemRequestDtos.add(orderItemDto);
+
+        OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
+        Long orderId = orderService.create(user, request);
+
+        //when
+        orderService.cancel(orderId);
+
+        //then
+        assertThat(orderRepository.count()).isEqualTo(1);
+        Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CANCEL);
+    }
+
+    @Test
     @DisplayName("상품 주문 실패 - 재고 부족")
-    void OrderFailStock() {
+    void orderFailStock() {
         //given
         OrderItemRequestDto orderItemDto = createOrderItemDto(item1.getId(), 1000);
         orderItemRequestDtos.add(orderItemDto);
@@ -73,7 +133,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("상품 주문 성공 - 주문 상태 변경")
-    void OrderUpdateOrderStatus() {
+    void orderUpdateOrderStatus() {
         //given
         OrderItemRequestDto orderItemDto = createOrderItemDto(item1.getId(), 1);
         orderItemRequestDtos.add(orderItemDto);
@@ -84,13 +144,13 @@ public class OrderServiceTest {
         Long orderId = orderService.create(user, request);
 
         //then
-        Order order = orderRepository.findById(orderId).orElse(null);
+        Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.ORDER);
     }
 
     @Test
     @DisplayName("상품 주문 성공 - 상품 상태 변경")
-    void OrderUpdateSaleStatus() {
+    void orderUpdateSaleStatus() {
         //given
         OrderItemRequestDto orderItemDto = createOrderItemDto(item2.getId(), 1);
         orderItemRequestDtos.add(orderItemDto);
@@ -106,7 +166,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("상품 주문 성공 - 상품 재고 감소")
-    void OrderDecreaseStock() {
+    void orderDecreaseStock() {
         //given
         OrderItemRequestDto orderItemDto = createOrderItemDto(item1.getId(), 1);
         orderItemRequestDtos.add(orderItemDto);
@@ -122,7 +182,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("상품 주문 성공 - 상품 여러 개")
-    void OrderManyItem() {
+    void orderManyItem() {
         //given
         OrderItemRequestDto orderItemDto1 = createOrderItemDto(item1.getId(), 2);
         orderItemRequestDtos.add(orderItemDto1);
@@ -138,13 +198,13 @@ public class OrderServiceTest {
         assertThat(orderItemRepository.count()).isEqualTo(2);
         assertThat(orderRepository.count()).isEqualTo(1);
 
-        Order order = orderRepository.findById(orderId).orElse(null);
+        Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
         assertThat(order.getRecipient()).isEqualTo("tester");
     }
 
     @Test
     @DisplayName("상품 주문 성공 - 상품 한 개")
-    void OrderOneItem() {
+    void orderOneItem() {
         //given
         OrderItemRequestDto orderItemDto = createOrderItemDto(item1.getId(), 2);
         orderItemRequestDtos.add(orderItemDto);
@@ -158,7 +218,7 @@ public class OrderServiceTest {
         assertThat(orderItemRepository.count()).isEqualTo(1);
         assertThat(orderRepository.count()).isEqualTo(1);
 
-        Order order = orderRepository.findById(orderId).orElse(null);
+        Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
         assertThat(order.getRecipient()).isEqualTo("tester");
     }
     private OrderItemRequestDto createOrderItemDto(Long itemId, Integer count) {
