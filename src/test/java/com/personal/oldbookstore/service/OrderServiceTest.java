@@ -20,7 +20,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -129,6 +128,25 @@ public class OrderServiceTest {
         assertThrows(CustomException.class, () -> {
             orderService.create(user, request);
         });
+    }
+
+    @Test
+    @DisplayName("상품 주문 성공 - 총 금액 계산")
+    void orderManyItemCalcTotalPrice() {
+        //given
+        OrderItemRequestDto orderItemDto1 = createOrderItemDto(item1.getId(), 2);
+        orderItemRequestDtos.add(orderItemDto1);
+        OrderItemRequestDto orderItemDto2 = createOrderItemDto(item2.getId(), 1);
+        orderItemRequestDtos.add(orderItemDto2);
+
+        OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
+
+        //when
+        Long orderId = orderService.create(user, request);
+
+        //then
+        Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
+        assertThat(order.getTotalPrice()).isEqualTo(22000);
     }
 
     @Test

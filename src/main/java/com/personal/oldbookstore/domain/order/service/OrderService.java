@@ -3,7 +3,9 @@ package com.personal.oldbookstore.domain.order.service;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.service.ItemService;
 import com.personal.oldbookstore.domain.order.dto.OrderItemRequestDto;
+import com.personal.oldbookstore.domain.order.dto.OrderListResponseDto;
 import com.personal.oldbookstore.domain.order.dto.OrderRequestDto;
+import com.personal.oldbookstore.domain.order.dto.OrderResponseDto;
 import com.personal.oldbookstore.domain.order.entity.Order;
 import com.personal.oldbookstore.domain.order.entity.OrderItem;
 import com.personal.oldbookstore.domain.order.repository.OrderRepository;
@@ -11,6 +13,8 @@ import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.util.exception.CustomException;
 import com.personal.oldbookstore.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +29,16 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemService itemService;
 
-    public void cancel(Long orderId) {
-        Order order = findOrder(orderId);
+    public Page<OrderListResponseDto> getList(Pageable pageable) {
+        return orderRepository.findAll(pageable).map(Order::toDtoList);
+    }
 
-        order.cancel();
+    public OrderResponseDto get(Long orderId) {
+        return findOrder(orderId).toDto();
+    }
+
+    public void cancel(Long orderId) {
+        findOrder(orderId).cancel();
     }
 
     public Long create(User user, OrderRequestDto dto) {

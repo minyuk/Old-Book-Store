@@ -1,6 +1,8 @@
 package com.personal.oldbookstore.domain.order.entity;
 
 import com.personal.oldbookstore.domain.base.BaseTimeEntity;
+import com.personal.oldbookstore.domain.order.dto.OrderListResponseDto;
+import com.personal.oldbookstore.domain.order.dto.OrderResponseDto;
 import com.personal.oldbookstore.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +11,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Table(name = "Orders")
 @Getter
@@ -59,6 +62,32 @@ public class Order extends BaseTimeEntity {
         this.payment = payment;
         this.orderStatus = orderStatus == null ? OrderStatus.ORDER : orderStatus;
         this.orderDate = orderDate == null ? LocalDateTime.now() : orderDate;
+    }
+
+    public OrderResponseDto toDto() {
+        return OrderResponseDto.builder()
+                .id(id)
+                .recipient(recipient)
+                .phone(phone)
+                .address(address)
+                .payment(payment)
+                .orderStatus(orderStatus)
+                .orderDate(orderDate)
+                .totalPrice(getTotalPrice())
+                .orderItemResponseDtos(orderItems.stream()
+                        .map(OrderItem::toDto).collect(Collectors.toList()))
+                .build();
+    }
+
+    public OrderListResponseDto toDtoList() {
+        return OrderListResponseDto.builder()
+                .id(id)
+                .orderStatus(orderStatus)
+                .orderDate(orderDate)
+                .totalPrice(getTotalPrice())
+                .orderItemResponseDtos(orderItems.stream()
+                        .map(OrderItem::toDto).collect(Collectors.toList()))
+                .build();
     }
 
     public void cancel() {

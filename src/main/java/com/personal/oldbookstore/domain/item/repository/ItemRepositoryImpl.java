@@ -2,7 +2,6 @@ package com.personal.oldbookstore.domain.item.repository;
 
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
-import com.personal.oldbookstore.domain.item.entity.QItem;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

@@ -3,7 +3,11 @@ package com.personal.oldbookstore.domain.order.repository;
 import com.personal.oldbookstore.domain.order.entity.Order;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.personal.oldbookstore.domain.item.entity.QItem.item;
@@ -14,6 +18,25 @@ import static com.personal.oldbookstore.domain.order.entity.QOrderItem.orderItem
 public class OrderRepositoryImpl implements OrderRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public Page<Order> findAll(Pageable pageable) {
+        List<Order> orders = queryFactory.selectFrom(order)
+                .join(order.orderItems, orderItem)
+                .fetchJoin()
+                .join(orderItem.item, item)
+                .fetchJoin()
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(order.id.desc())
+                .fetch();
+
+        Long total = queryFactory.select(order.count())
+                .from(order)
+                .fetchOne();
+
+        return new PageImpl<>(orders, pageable, total);
+    }
 
     @Override
     public Optional<Order> findByIdWithFetchJoinOrderItem(Long id) {
