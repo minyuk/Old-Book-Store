@@ -2,7 +2,6 @@ package com.personal.oldbookstore.domain.item.repository;
 
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
-import com.personal.oldbookstore.domain.item.entity.QItem;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -42,13 +41,13 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
 
     @Override
     public Optional<Item> findByIdWithFetchJoinUser(Long id) {
-        Item item = queryFactory.selectFrom(QItem.item)
-                .join(QItem.item.user, user)
+        Item findItem = queryFactory.selectFrom(item)
+                .join(item.user, user)
                 .fetchJoin()
-                .where(QItem.item.id.eq(id))
+                .where(item.id.eq(id))
                 .fetchOne();
 
-        return Optional.ofNullable(item);
+        return Optional.ofNullable(findItem);
     }
 
     private BooleanExpression containsKeyword(String keyword) {

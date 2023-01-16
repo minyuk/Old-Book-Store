@@ -1,4 +1,4 @@
-package com.personal.oldbookstore.service;
+package com.personal.oldbookstore.domain.user.service;
 
 import com.personal.oldbookstore.domain.user.dto.UserNicknameDto;
 import com.personal.oldbookstore.domain.user.dto.UserRequestDto;

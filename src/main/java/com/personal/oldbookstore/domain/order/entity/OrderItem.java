@@ -2,6 +2,7 @@ package com.personal.oldbookstore.domain.order.entity;
 
 import com.personal.oldbookstore.domain.base.BaseTimeEntity;
 import com.personal.oldbookstore.domain.item.entity.Item;
+import com.personal.oldbookstore.domain.order.dto.OrderItemResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,9 +42,20 @@ public class OrderItem extends BaseTimeEntity {
         this.orderPrice = orderPrice * count;
     }
 
-    public void cancel() {
-        getItem().incrementStock(count);
+    public OrderItemResponseDto toDto() {
+        return OrderItemResponseDto.builder()
+                .id(id)
+                .name(item.getName())
+                .bookTitle(item.getBookTitle())
+                .itemPrice(item.getPrice())
+                .count(count)
+                .orderPrice(orderPrice)
+                .build();
     }
 
+    public void cancel() {
+        getItem().incrementStock(count);
+        getItem().updateSaleStatus();
+    }
 
 }

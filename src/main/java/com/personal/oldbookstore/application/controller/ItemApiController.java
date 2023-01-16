@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.application.controller;
 
+import com.personal.oldbookstore.application.usecase.DeleteItemUsecase;
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
@@ -21,6 +22,8 @@ import javax.validation.Valid;
 public class ItemApiController {
 
     private final ItemService itemService;
+
+    private final DeleteItemUsecase deleteItemUsecase;
 
     @GetMapping("")
     public Page<ItemListResponseDto> getList(Pageable pageable,
@@ -52,7 +55,7 @@ public class ItemApiController {
     @DeleteMapping("{itemId}")
     public void delete(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        itemService.delete(itemId, principalDetails.getUser());
+        deleteItemUsecase.excute(itemId, principalDetails.getUser());
     }
 
 
