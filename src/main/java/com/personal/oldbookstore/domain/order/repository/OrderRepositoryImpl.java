@@ -50,4 +50,15 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
 
         return Optional.ofNullable(findOrder);
     }
+
+    @Override
+    public List<Order> findAllByItemId(Long itemId) {
+        return queryFactory.selectFrom(order)
+                .join(order.orderItems, orderItem)
+                .fetchJoin()
+                .join(orderItem.item, item)
+                .fetchJoin()
+                .where(orderItem.item.id.eq(itemId))
+                .fetch();
+    }
 }

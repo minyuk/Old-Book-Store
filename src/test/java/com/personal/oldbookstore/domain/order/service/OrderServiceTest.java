@@ -1,4 +1,4 @@
-package com.personal.oldbookstore.service;
+package com.personal.oldbookstore.domain.order.service;
 
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
@@ -11,7 +11,6 @@ import com.personal.oldbookstore.domain.order.entity.OrderStatus;
 import com.personal.oldbookstore.domain.order.entity.Payment;
 import com.personal.oldbookstore.domain.order.repository.OrderItemRepository;
 import com.personal.oldbookstore.domain.order.repository.OrderRepository;
-import com.personal.oldbookstore.domain.order.service.OrderService;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.domain.user.repository.UserRepository;
 import com.personal.oldbookstore.util.exception.CustomException;

@@ -18,6 +18,7 @@ public enum ErrorCode {
     //item
     EDIT_ACCESS_DENIED("edit", "edit.access.denied", "수정 권한이 없습니다.", HttpStatus.BAD_REQUEST),
     DELETE_ACCESS_DENIED("delete", "delete.access.denied", "삭제 권한이 없습니다.", HttpStatus.BAD_REQUEST),
+    DELETE_EXIST_ORDER("delete", "delete.exist.order", "주문 내역이 있는 상품입니다.", HttpStatus.BAD_REQUEST),
 
     //order
     STOCK_FAIL("stock", "stock.fail", "재고가 부족합니다.", HttpStatus.BAD_REQUEST),

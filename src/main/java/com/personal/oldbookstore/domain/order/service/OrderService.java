@@ -37,6 +37,10 @@ public class OrderService {
         return findOrder(orderId).toDto();
     }
 
+    public List<Order> findAllByItemId(Long itemId) {
+        return orderRepository.findAllByItemId(itemId);
+    }
+
     public void cancel(Long orderId) {
         findOrder(orderId).cancel();
     }
