@@ -6,6 +6,10 @@ import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
+import com.personal.oldbookstore.domain.order.entity.Order;
+import com.personal.oldbookstore.domain.order.entity.OrderItem;
+import com.personal.oldbookstore.domain.order.entity.Payment;
+import com.personal.oldbookstore.domain.order.repository.OrderRepository;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.domain.user.repository.UserRepository;
 import com.personal.oldbookstore.util.exception.CustomException;
@@ -18,6 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,7 +42,11 @@ public class ItemServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     private User user;
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     @BeforeEach
     void createUser() {
@@ -229,6 +240,25 @@ public class ItemServiceTest {
     }
 
     @Test
+    @DisplayName("상품 삭제 실패 - 주문 처리 된 상품")
+    void deleteExistOrder() {
+        //given
+        ItemRequestDto itemRequestDto = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
+                "깨끗해요", 2, 5000);
+        Long itemId = itemService.create(user, itemRequestDto);
+
+        OrderItem orderItem = createOrderItem(itemId, 1);
+        orderItems.add(orderItem);
+        createOrder(user, orderItems, "tester", "01012345678", "CARD");
+
+        //when
+        //then
+        assertThrows(CustomException.class, () -> {
+            itemService.delete(itemId, user);
+        });
+    }
+
+    @Test
     @DisplayName("상품 삭제 실패 - 작성자 불일치")
     void deleteNotEqualUser() {
         //given
@@ -288,6 +318,29 @@ public class ItemServiceTest {
         Item item = itemRepository.findById(itemId).orElse(null);
         assertThat(item.getName()).isEqualTo("자바 팔아요");
         assertThat(item.getPrice()).isEqualTo(5000);
+    }
+
+    private OrderItem createOrderItem(Long itemId, Integer count) {
+        Item item = itemRepository.findByIdWithFetchJoinUser(itemId).orElse(null);
+
+        return OrderItem.builder()
+                .item(item)
+                .count(count)
+                .orderPrice(item.getPrice())
+                .build();
+    }
+
+    private void createOrder(User user, List<OrderItem> orderItems, String recipient, String phone, String payment) {
+        Order order = Order.builder()
+                .user(user)
+                .orderItems(orderItems)
+                .recipient(recipient)
+                .phone(phone)
+                .payment(Payment.valueOf(payment))
+                .address(null)
+                .build();
+
+        orderRepository.save(order);
     }
 
     private User saveUser(String email, String password, String nickname) {

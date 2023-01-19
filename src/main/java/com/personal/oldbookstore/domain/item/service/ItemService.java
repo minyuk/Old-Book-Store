@@ -5,6 +5,7 @@ import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
+import com.personal.oldbookstore.domain.order.repository.OrderRepository;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.util.exception.CustomException;
 import com.personal.oldbookstore.util.exception.ErrorCode;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final OrderRepository orderRepository;
 
     public Page<ItemListResponseDto> getList(Pageable pageable, String category, String keyword) {
         return itemRepository.findAllBySearchOption(pageable, category, keyword).map(Item::toDtoList);
@@ -66,10 +68,14 @@ public class ItemService {
             throw new CustomException(ErrorCode.DELETE_ACCESS_DENIED);
         }
 
+        if (!orderRepository.findAllByItemId(itemId).isEmpty()) {
+            throw new CustomException(ErrorCode.DELETE_EXIST_ORDER);
+        }
+
         itemRepository.delete(item);
     }
 
-    public Item findItem(Long id) {
+    private Item findItem(Long id) {
         return itemRepository.findByIdWithFetchJoinUser(id).orElseThrow(() ->
                 new CustomException(ErrorCode.ID_NOT_FOUND)
         );
