@@ -2,7 +2,9 @@ package com.personal.oldbookstore.domain.like.entity;
 
 import com.personal.oldbookstore.domain.base.BaseTimeEntity;
 import com.personal.oldbookstore.domain.item.entity.Item;
+import com.personal.oldbookstore.domain.like.dto.LikeItemResponseDto;
 import com.personal.oldbookstore.domain.user.entity.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +28,18 @@ public class LikeItem extends BaseTimeEntity {
     @JoinColumn(name = "item_id")
     private Item item;
 
+    @Builder
+    public LikeItem(User user, Item item) {
+        this.user = user;
+        this.item = item;
+    }
+
+    public LikeItemResponseDto toDto() {
+        return LikeItemResponseDto.builder()
+                .id(id)
+                .name(item.getName())
+                .bookTitle(item.getBookTitle())
+                .price(item.getPrice())
+                .build();
+    }
 }

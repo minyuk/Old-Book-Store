@@ -49,6 +49,8 @@ public class Item extends BaseTimeEntity {
 
     private Long viewCount;
 
+    private Long likeCount;
+
     @Enumerated(EnumType.STRING)
     private SaleStatus saleStatus;
 
@@ -57,7 +59,7 @@ public class Item extends BaseTimeEntity {
     private User user;
 
     @Builder
-    public Item(User user, String name, Category category, String bookTitle, String bookAuthor, String contents, Integer stock, Integer price, Long viewCount, SaleStatus saleStatus) {
+    public Item(User user, String name, Category category, String bookTitle, String bookAuthor, String contents, Integer stock, Integer price, Long viewCount, Long likeCount, SaleStatus saleStatus) {
         this.user = user;
         this.name = name;
         this.category = category;
@@ -67,11 +69,12 @@ public class Item extends BaseTimeEntity {
         this.stock = stock;
         this.price = price;
         this.viewCount = viewCount == null ? 0 : viewCount;
+        this.likeCount = likeCount == null ? 0 : likeCount;
         this.saleStatus = saleStatus == null ? SaleStatus.SALE : saleStatus;
     }
 
     public void incrementViewCount() {
-        viewCount += 1;
+        viewCount++;
     }
 
     public void decreaseStock(int orderQuantity) {
@@ -86,6 +89,10 @@ public class Item extends BaseTimeEntity {
     public void incrementStock(int cancelQuantity) {
         stock += cancelQuantity;
     }
+
+    public void incrementLikeCount() { likeCount++; }
+
+    public void decreaseLikeCount() { likeCount--; }
 
     public void updateSaleStatus() {
         if (stock > 0) saleStatus = SaleStatus.SALE;

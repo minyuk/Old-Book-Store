@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     //common
     ID_NOT_FOUND("id", "id.notfound", "해당 id를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
+    ONLY_USER("access", "access.denied", "회원만 기능을 이용할 수 있습니다.", HttpStatus.BAD_REQUEST),
 
     //User
     EMAIL_DUPLICATED("email", "email.duplicated", "이메일이 중복됩니다.", HttpStatus.BAD_REQUEST),
