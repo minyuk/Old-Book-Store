@@ -1,7 +1,7 @@
 package com.personal.oldbookstore.domain.order.service;
 
 import com.personal.oldbookstore.domain.item.entity.Item;
-import com.personal.oldbookstore.domain.item.service.ItemService;
+import com.personal.oldbookstore.domain.item.repository.ItemRepository;
 import com.personal.oldbookstore.domain.order.dto.OrderItemRequestDto;
 import com.personal.oldbookstore.domain.order.dto.OrderListResponseDto;
 import com.personal.oldbookstore.domain.order.dto.OrderRequestDto;
@@ -27,7 +27,7 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final ItemService itemService;
+    private final ItemRepository itemRepository;
 
     public Page<OrderListResponseDto> getList(Pageable pageable) {
         return orderRepository.findAll(pageable).map(Order::toDtoList);
@@ -71,7 +71,8 @@ public class OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (OrderItemRequestDto orderItem : dto.orderItems()) {
-            Item item = itemService.findItem(orderItem.itemId());
+            Item item = itemRepository.findByIdWithFetchJoinUser(orderItem.itemId()).orElseThrow(() ->
+                    new CustomException(ErrorCode.ID_NOT_FOUND));
 
             orderItems.add(OrderItem.builder()
                     .item(item)

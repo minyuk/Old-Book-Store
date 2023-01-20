@@ -4,6 +4,7 @@ import com.personal.oldbookstore.domain.base.BaseTimeEntity;
 import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
+import com.personal.oldbookstore.domain.like.entity.LikeItem;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.util.exception.CustomException;
 import com.personal.oldbookstore.util.exception.ErrorCode;
@@ -12,6 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -49,6 +53,8 @@ public class Item extends BaseTimeEntity {
 
     private Long viewCount;
 
+    private Long likeCount;
+
     @Enumerated(EnumType.STRING)
     private SaleStatus saleStatus;
 
@@ -56,8 +62,11 @@ public class Item extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LikeItem> likeItems = new ArrayList<>();
+
     @Builder
-    public Item(User user, String name, Category category, String bookTitle, String bookAuthor, String contents, Integer stock, Integer price, Long viewCount, SaleStatus saleStatus) {
+    public Item(User user, String name, Category category, String bookTitle, String bookAuthor, String contents, Integer stock, Integer price, Long viewCount, Long likeCount, SaleStatus saleStatus) {
         this.user = user;
         this.name = name;
         this.category = category;
@@ -67,11 +76,12 @@ public class Item extends BaseTimeEntity {
         this.stock = stock;
         this.price = price;
         this.viewCount = viewCount == null ? 0 : viewCount;
+        this.likeCount = likeCount == null ? 0 : likeCount;
         this.saleStatus = saleStatus == null ? SaleStatus.SALE : saleStatus;
     }
 
     public void incrementViewCount() {
-        viewCount += 1;
+        viewCount++;
     }
 
     public void decreaseStock(int orderQuantity) {
@@ -86,6 +96,10 @@ public class Item extends BaseTimeEntity {
     public void incrementStock(int cancelQuantity) {
         stock += cancelQuantity;
     }
+
+    public void incrementLikeCount() { likeCount++; }
+
+    public void decreaseLikeCount() { likeCount--; }
 
     public void updateSaleStatus() {
         if (stock > 0) saleStatus = SaleStatus.SALE;
