@@ -23,13 +23,13 @@ public class LikeItemController {
         return likeItemService.getList(principalDetails.getUser().getId(), pageable);
     }
 
-    @DeleteMapping("/{itemId}")
+    @DeleteMapping("/items/{itemId}")
     public void delete(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
         likeItemService.delete(principalDetails.getUser(), itemId);
     }
 
-    @PostMapping("/{itemId}")
+    @PostMapping("/items/{itemId}")
     public ResponseEntity<Long> create(@PathVariable Long itemId,
                                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ResponseEntity.status(HttpStatus.OK).body(likeItemService.create(principalDetails.getUser(), itemId));

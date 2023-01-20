@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.domain.item.entity;
 
 import com.personal.oldbookstore.domain.base.BaseTimeEntity;
+import com.personal.oldbookstore.domain.basket.entity.Basket;
 import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
@@ -64,6 +65,9 @@ public class Item extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeItem> likeItems = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Basket> baskets = new ArrayList<>();
 
     @Builder
     public Item(User user, String name, Category category, String bookTitle, String bookAuthor, String contents, Integer stock, Integer price, Long viewCount, Long likeCount, SaleStatus saleStatus) {

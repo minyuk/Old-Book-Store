@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.domain.basket.entity;
 
 import com.personal.oldbookstore.domain.base.BaseTimeEntity;
+import com.personal.oldbookstore.domain.basket.dto.BasketResponseDto;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.user.entity.User;
 import lombok.Builder;
@@ -31,8 +32,32 @@ public class Basket extends BaseTimeEntity {
     private Item item;
 
     @Builder
-    public Basket(Long id, Integer count) {
-        this.id = id;
+    public Basket(User user, Item item, Integer count) {
+        this.user = user;
+        this.item = item;
         this.count = count;
     }
+
+    public BasketResponseDto toDto() {
+        return BasketResponseDto.builder()
+                .id(id)
+                .itemId(item.getId())
+                .name(item.getName())
+                .bookTitle(item.getBookTitle())
+                .itemPrice(item.getPrice())
+                .itemStock(item.getStock())
+                .saleStatus(item.getSaleStatus())
+                .count(count)
+                .totalPrice(getTotalPrice())
+                .build();
+    }
+
+    public void updateCount(Integer count) {
+        this.count = count;
+    }
+
+    private Integer getTotalPrice() {
+        return item.getPrice() * count;
+    }
+
 }

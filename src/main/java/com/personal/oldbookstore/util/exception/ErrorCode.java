@@ -23,6 +23,9 @@ public enum ErrorCode {
 
     //order
     STOCK_FAIL("stock", "stock.fail", "재고가 부족합니다.", HttpStatus.BAD_REQUEST),
+
+    //basket
+    ALREADY_SAVED_BASKET("save", "already.saved.basket", "이미 장바구니에 담긴 상품입니다.", HttpStatus.BAD_REQUEST)
     ;
 
     private String cause;
