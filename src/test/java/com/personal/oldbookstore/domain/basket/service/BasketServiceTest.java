@@ -44,6 +44,21 @@ class BasketServiceTest {
     }
 
     @Test
+    @DisplayName("장바구니 삭제 성공")
+    void delete() {
+        //given
+        Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
+        BasketRequestDto createDto = new BasketRequestDto(1);
+        basketService.create(user, item.getId(), createDto);
+
+        //when
+        basketService.delete(user, item.getId());
+
+        //then
+        assertThat(basketRepository.count()).isEqualTo(0);
+    }
+
+    @Test
     @DisplayName("장바구니 수정 실패 - 존재하지 않는 상품")
     void updateNotFound() {
         //given

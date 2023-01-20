@@ -16,6 +16,19 @@ public class BasketApiController {
 
     private final BasketService basketService;
 
+    @DeleteMapping("/items/{itemId}")
+    public void delete(@PathVariable Long itemId,
+                       @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        basketService.delete(principalDetails.getUser(), itemId);
+    }
+
+    @PatchMapping("/items/{itemId}")
+    public void update(@PathVariable Long itemId,
+                       @AuthenticationPrincipal PrincipalDetails principalDetails,
+                       @RequestBody BasketRequestDto dto) {
+        basketService.update(principalDetails.getUser(), itemId, dto);
+    }
+
     @PostMapping("/items/{itemId}")
     public ResponseEntity<Long> create(@PathVariable Long itemId,
                                        @AuthenticationPrincipal PrincipalDetails principalDetails,

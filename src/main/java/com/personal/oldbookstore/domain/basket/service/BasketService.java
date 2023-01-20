@@ -21,6 +21,10 @@ public class BasketService {
 
     private final ItemRepository itemRepository;
 
+    public void delete(User user, Long itemId) {
+        basketRepository.deleteByUserIdAndItemId(user.getId(), itemId);
+    }
+
     public void update(User user, Long itemId, BasketRequestDto dto) {
         Basket basket = basketRepository.findByUserIdAndItemId(user.getId(), itemId).orElseThrow(() ->
                 new CustomException(ErrorCode.ID_NOT_FOUND));
