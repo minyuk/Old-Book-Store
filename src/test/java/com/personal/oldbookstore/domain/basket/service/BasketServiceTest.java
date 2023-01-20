@@ -44,6 +44,41 @@ class BasketServiceTest {
     }
 
     @Test
+    @DisplayName("장바구니 수정 실패 - 존재하지 않는 상품")
+    void updateNotFound() {
+        //given
+        Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
+        BasketRequestDto createDto = new BasketRequestDto(1);
+        basketService.create(user, item.getId(), createDto);
+
+        BasketRequestDto updateDto = new BasketRequestDto(10);
+
+        //when
+        //then
+        assertThrows(CustomException.class, () -> {
+            basketService.update(user, 10L, updateDto);
+        });
+    }
+
+    @Test
+    @DisplayName("장바구니 수정 성공")
+    void update() {
+        //given
+        Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
+        BasketRequestDto createDto = new BasketRequestDto(1);
+        basketService.create(user, item.getId(), createDto);
+
+        BasketRequestDto updateDto = new BasketRequestDto(10);
+
+        //when
+        basketService.update(user, item.getId(), updateDto);
+
+        //then
+        Basket basket = basketRepository.findByUserIdAndItemId(user.getId(), item.getId()).orElse(null);
+        assertThat(basket.getCount()).isEqualTo(10);
+    }
+
+    @Test
     @DisplayName("장바구니 등록 실패 - 이미 등록 된 상품")
     void createExistItem() {
         //given

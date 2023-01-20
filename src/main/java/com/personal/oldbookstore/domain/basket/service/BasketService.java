@@ -21,6 +21,13 @@ public class BasketService {
 
     private final ItemRepository itemRepository;
 
+    public void update(User user, Long itemId, BasketRequestDto dto) {
+        Basket basket = basketRepository.findByUserIdAndItemId(user.getId(), itemId).orElseThrow(() ->
+                new CustomException(ErrorCode.ID_NOT_FOUND));
+
+        basket.updateCount(dto.count());
+    }
+
     public Long create(User user, Long itemId, BasketRequestDto dto) {
         if (user == null) {
             throw new CustomException(ErrorCode.ONLY_USER);
@@ -45,6 +52,5 @@ public class BasketService {
             throw new CustomException(ErrorCode.ID_NOT_FOUND);
         });
     }
-
 
 }
