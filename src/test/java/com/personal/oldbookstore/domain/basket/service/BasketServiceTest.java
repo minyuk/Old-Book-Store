@@ -2,6 +2,7 @@ package com.personal.oldbookstore.domain.basket.service;
 
 
 import com.personal.oldbookstore.domain.basket.dto.BasketRequestDto;
+import com.personal.oldbookstore.domain.basket.dto.BasketResponseDto;
 import com.personal.oldbookstore.domain.basket.entity.Basket;
 import com.personal.oldbookstore.domain.basket.repository.BasketRepository;
 import com.personal.oldbookstore.domain.item.entity.Category;
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +45,48 @@ class BasketServiceTest {
     @BeforeEach
     void createUserWithItem() {
         user = saveUser("test@abc.com", "1234!@", "tester");
+    }
+
+    @Test
+    @DisplayName("장바구니 리스트 조회 성공 - 페이징")
+    void getListPage() {
+        //given
+        Item item1 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
+        BasketRequestDto dto1 = new BasketRequestDto(1);
+        basketService.create(user, item1.getId(), dto1);
+
+        Item item2 = saveItem(user, "Test", "IT", "testing", "tester", "test", 100, 10000);
+        BasketRequestDto dto2 = new BasketRequestDto(1);
+        basketService.create(user, item2.getId(), dto2);
+
+        Pageable pageable = PageRequest.of(1, 1);
+
+        //when
+        Page<BasketResponseDto> basketList = basketService.getList(user, pageable);
+
+        //then
+        assertThat(basketList.get().count()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("장바구니 리스트 조회 성공")
+    void getList() {
+        //given
+        Item item1 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
+        BasketRequestDto dto1 = new BasketRequestDto(1);
+        basketService.create(user, item1.getId(), dto1);
+
+        Item item2 = saveItem(user, "Test", "IT", "testing", "tester", "test", 100, 10000);
+        BasketRequestDto dto2 = new BasketRequestDto(1);
+        basketService.create(user, item2.getId(), dto2);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        Page<BasketResponseDto> basketList = basketService.getList(user, pageable);
+
+        //then
+        assertThat(basketList.get().count()).isEqualTo(2);
     }
 
     @Test

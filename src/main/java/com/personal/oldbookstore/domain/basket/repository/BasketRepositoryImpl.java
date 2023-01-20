@@ -3,7 +3,11 @@ package com.personal.oldbookstore.domain.basket.repository;
 import com.personal.oldbookstore.domain.basket.entity.Basket;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.personal.oldbookstore.domain.basket.entity.QBasket.basket;
@@ -22,6 +26,24 @@ public class BasketRepositoryImpl implements BasketRepositoryCustom{
                 .fetchOne();
 
         return Optional.ofNullable(findBasket);
+    }
+
+    @Override
+    public Page<Basket> findAllByUserId(Long id, Pageable pageable) {
+        List<Basket> baskets = queryFactory.selectFrom(basket)
+                .join(basket.item, item)
+                .fetchJoin()
+                .where(basket.user.id.eq(id))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(basket.id.desc())
+                .fetch();
+
+        Long total = queryFactory.select(basket.count())
+                .from(basket)
+                .fetchOne();
+
+        return new PageImpl<>(baskets, pageable, total);
     }
 
 }

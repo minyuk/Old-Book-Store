@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.domain.basket.service;
 
 import com.personal.oldbookstore.domain.basket.dto.BasketRequestDto;
+import com.personal.oldbookstore.domain.basket.dto.BasketResponseDto;
 import com.personal.oldbookstore.domain.basket.entity.Basket;
 import com.personal.oldbookstore.domain.basket.repository.BasketRepository;
 import com.personal.oldbookstore.domain.item.entity.Item;
@@ -9,6 +10,8 @@ import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.util.exception.CustomException;
 import com.personal.oldbookstore.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,10 @@ public class BasketService {
     private final BasketRepository basketRepository;
 
     private final ItemRepository itemRepository;
+
+    public Page<BasketResponseDto> getList(User user, Pageable pageable) {
+        return basketRepository.findAllByUserId(user.getId(), pageable).map(Basket::toDto);
+    }
 
     public void delete(User user, Long itemId) {
         basketRepository.deleteByUserIdAndItemId(user.getId(), itemId);
