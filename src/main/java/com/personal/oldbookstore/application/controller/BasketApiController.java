@@ -42,7 +42,7 @@ public class BasketApiController {
     public ResponseEntity<Long> create(@PathVariable Long itemId,
                                        @AuthenticationPrincipal PrincipalDetails principalDetails,
                                        @RequestBody BasketRequestDto dto) {
-        return ResponseEntity.status(HttpStatus.OK).body(basketService.create(principalDetails.getUser(), itemId, dto));
+        return ResponseEntity.status(HttpStatus.OK).body(basketService.create(principalDetails, itemId, dto));
     }
 
 }
