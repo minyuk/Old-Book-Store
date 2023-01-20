@@ -4,6 +4,7 @@ import com.personal.oldbookstore.domain.base.BaseTimeEntity;
 import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
+import com.personal.oldbookstore.domain.like.entity.LikeItem;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.util.exception.CustomException;
 import com.personal.oldbookstore.util.exception.ErrorCode;
@@ -12,6 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -57,6 +61,9 @@ public class Item extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LikeItem> likeItems = new ArrayList<>();
 
     @Builder
     public Item(User user, String name, Category category, String bookTitle, String bookAuthor, String contents, Integer stock, Integer price, Long viewCount, Long likeCount, SaleStatus saleStatus) {
