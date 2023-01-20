@@ -5,6 +5,9 @@ server:
       charset: utf-8
 
 spring:
+  main:
+    allow-circular-references: true
+
   datasource:
     url: jdbc:mariadb://${rds.hostname}:${rds.port}/${rds.db.name}
     driver-class-name: org.mariadb.jdbc.Driver
