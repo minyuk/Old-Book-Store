@@ -31,8 +31,13 @@ public class Basket extends BaseTimeEntity {
     private Item item;
 
     @Builder
-    public Basket(Long id, Integer count) {
-        this.id = id;
+    public Basket(User user, Item item, Integer count) {
+        this.user = user;
+        this.item = item;
+        this.count = count;
+    }
+
+    public void updateCount(Integer count) {
         this.count = count;
     }
 }
