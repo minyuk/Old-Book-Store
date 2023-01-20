@@ -40,4 +40,5 @@ public class Basket extends BaseTimeEntity {
     public void updateCount(Integer count) {
         this.count = count;
     }
+
 }

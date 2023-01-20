@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface BasketRepositoryCustom {
 
     Optional<Basket> findByUserIdAndItemId(Long userId, Long itemId);
+
 }
