@@ -1,10 +1,12 @@
 package com.personal.oldbookstore.domain.item.service;
 
+import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
+import com.personal.oldbookstore.domain.like.repository.LikeItemRepository;
 import com.personal.oldbookstore.domain.order.repository.OrderRepository;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.util.exception.CustomException;
@@ -24,16 +26,23 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final OrderRepository orderRepository;
 
+    private final LikeItemRepository likeItemRepository;
+
     public Page<ItemListResponseDto> getList(Pageable pageable, String category, String keyword) {
         return itemRepository.findAllBySearchOption(pageable, category, keyword).map(Item::toDtoList);
     }
 
-    public ItemResponseDto get(Long itemId) {
+    public ItemResponseDto get(PrincipalDetails principalDetails, Long itemId) {
         Item item = findItem(itemId);
 
         item.incrementViewCount();
 
-        return item.toDto();
+        ItemResponseDto itemResponseDto = item.toDto();
+        if (principalDetails != null) {
+            itemResponseDto.setLikeStatus(likeItemRepository.findByUserIdAndItemId(principalDetails.getUser().getId(), itemId).isPresent());
+        }
+
+        return itemResponseDto;
     }
 
     public Long create(User user, ItemRequestDto dto) {
