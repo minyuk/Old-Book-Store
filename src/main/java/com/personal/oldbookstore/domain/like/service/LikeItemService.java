@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.like.service;
 
+import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
 import com.personal.oldbookstore.domain.like.dto.LikeItemResponseDto;
@@ -33,15 +34,15 @@ public class LikeItemService {
         likeItemRepository.deleteByUserIdAndItemId(user.getId(), itemId);
     }
 
-    public Long create(User user, Long itemId) {
-        if (user == null) {
+    public Long create(PrincipalDetails principalDetails, Long itemId) {
+        if (principalDetails == null) {
             throw new CustomException(ErrorCode.ONLY_USER);
         }
 
         Item item = getItem(itemId);
 
         LikeItem likeItem = LikeItem.builder()
-                .user(user)
+                .user(principalDetails.getUser())
                 .item(item)
                 .build();
 

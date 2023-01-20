@@ -32,6 +32,6 @@ public class LikeItemController {
     @PostMapping("/items/{itemId}")
     public ResponseEntity<Long> create(@PathVariable Long itemId,
                                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        return ResponseEntity.status(HttpStatus.OK).body(likeItemService.create(principalDetails.getUser(), itemId));
+        return ResponseEntity.status(HttpStatus.OK).body(likeItemService.create(principalDetails, itemId));
     }
 }
