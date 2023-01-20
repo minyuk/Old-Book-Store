@@ -29,10 +29,11 @@ public class ItemApiController {
         return itemService.getList(pageable, category, keyword);
     }
 
-    @GetMapping("{itemId}")
-    public ResponseEntity<ItemResponseDto> get(@PathVariable Long itemId) {
+    @GetMapping("/{itemId}")
+    public ResponseEntity<ItemResponseDto> get(@PathVariable Long itemId,
+                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(itemService.get(itemId));
+                .body(itemService.get(principalDetails, itemId));
     }
 
     @PostMapping("")
@@ -42,14 +43,14 @@ public class ItemApiController {
                 .body(itemService.create(principalDetails.getUser(), dto));
     }
 
-    @PatchMapping("{itemId}")
+    @PatchMapping("/{itemId}")
     public void update(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails,
                        @Valid @RequestBody ItemRequestDto dto) {
         itemService.update(itemId,principalDetails.getUser(), dto);
     }
 
-    @DeleteMapping("{itemId}")
+    @DeleteMapping("/{itemId}")
     public void delete(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
         itemService.delete(itemId, principalDetails.getUser());

@@ -46,4 +46,15 @@ public class LikeItemRepositoryImpl implements LikeItemRepositoryCustom {
 
         return new PageImpl<>(likeItems, pageable, total);
     }
+
+    @Override
+    public Optional<LikeItem> findByUserIdAndItemId(Long userId, Long itemId) {
+        LikeItem findLikeItem = queryFactory.selectFrom(likeItem)
+                .join(likeItem.item, item)
+                .fetchJoin()
+                .where(likeItem.user.id.eq(userId).and(likeItem.item.id.eq(itemId)))
+                .fetchOne();
+
+        return Optional.ofNullable(findLikeItem);
+    }
 }

@@ -37,6 +37,7 @@ public class LikeItem extends BaseTimeEntity {
     public LikeItemResponseDto toDto() {
         return LikeItemResponseDto.builder()
                 .id(id)
+                .itemId(item.getId())
                 .name(item.getName())
                 .bookTitle(item.getBookTitle())
                 .price(item.getPrice())

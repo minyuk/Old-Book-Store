@@ -12,4 +12,6 @@ public interface LikeItemRepositoryCustom {
 
     Page<LikeItem> findAllByUserId(Long id, Pageable pageable);
 
+    Optional<LikeItem> findByUserIdAndItemId(Long userId, Long itemId);
+
 }

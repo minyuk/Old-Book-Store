@@ -27,10 +27,6 @@ public class LikeItemService {
     }
 
     public void delete(User user, Long itemId) {
-        if (user == null) {
-            throw new CustomException(ErrorCode.ONLY_USER);
-        }
-
         Item item = getItem(itemId);
         item.decreaseLikeCount();
 
