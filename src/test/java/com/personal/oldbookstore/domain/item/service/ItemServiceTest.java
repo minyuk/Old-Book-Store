@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.item.service;
 
+import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
@@ -46,11 +47,13 @@ public class ItemServiceTest {
     private OrderRepository orderRepository;
 
     private User user;
+    private PrincipalDetails principalDetails;
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @BeforeEach
     void createUser() {
         user = saveUser("test@abc.com", "1234!@", "tester");
+        principalDetails = new PrincipalDetails(user);
     }
 
     @Test
@@ -150,10 +153,10 @@ public class ItemServiceTest {
         Long itemId = itemService.create(user, request);
 
         //when
-        itemService.get(itemId);
-        itemService.get(itemId);
-        itemService.get(itemId);
-        itemService.get(itemId);
+        itemService.get(principalDetails, itemId);
+        itemService.get(principalDetails, itemId);
+        itemService.get(principalDetails, itemId);
+        itemService.get(principalDetails, itemId);
 
         //then
         Item item = itemRepository.findById(itemId).orElse(null);
@@ -167,7 +170,7 @@ public class ItemServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            itemService.get(1L);
+            itemService.get(principalDetails, 1L);
         });
     }
 
@@ -180,10 +183,10 @@ public class ItemServiceTest {
         Long itemId = itemService.create(user, request);
 
         //when
-        ItemResponseDto response = itemService.get(itemId);
+        ItemResponseDto response = itemService.get(principalDetails, itemId);
 
         //then
-        assertThat(response.name()).isEqualTo(request.name());
+        assertThat(response.getName()).isEqualTo(request.name());
     }
 
     @Test
