@@ -91,7 +91,7 @@ class LikeItemServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            likeItemService.delete(user, 1L);
+            likeItemService.delete(principalDetails, 1L);
         });
     }
 
@@ -103,7 +103,7 @@ class LikeItemServiceTest {
         likeItemService.create(principalDetails, item.getId());
 
         //when
-        likeItemService.delete(user, item.getId());
+        likeItemService.delete(principalDetails, item.getId());
 
         //then
         Item findItem = itemRepository.findByIdWithFetchJoinUser(item.getId()).orElse(null);
@@ -118,7 +118,7 @@ class LikeItemServiceTest {
         likeItemService.create(principalDetails, item.getId());
 
         //when
-        likeItemService.delete(user, item.getId());
+        likeItemService.delete(principalDetails, item.getId());
 
         //then
         assertThat(likeItemRepository.count()).isEqualTo(0);

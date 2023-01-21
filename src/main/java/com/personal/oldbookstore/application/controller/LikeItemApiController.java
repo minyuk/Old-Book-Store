@@ -26,7 +26,7 @@ public class LikeItemApiController {
     @DeleteMapping("/items/{itemId}")
     public void delete(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        likeItemService.delete(principalDetails.getUser(), itemId);
+        likeItemService.delete(principalDetails, itemId);
     }
 
     @PostMapping("/items/{itemId}")

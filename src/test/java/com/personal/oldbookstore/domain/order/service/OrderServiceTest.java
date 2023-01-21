@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.order.service;
 
+import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.entity.SaleStatus;
@@ -44,12 +45,14 @@ public class OrderServiceTest {
     private UserRepository userRepository;
 
     private User user;
-    private Item item1, item2, item3;
+    private PrincipalDetails principalDetails;
+    private Item item1, item2;
     private List<OrderItemRequestDto> orderItemRequestDtos = new ArrayList<>();
 
     @BeforeEach
     void createUserWithItem() {
         user = saveUser("test@abc.com", "1234!@", "tester");
+        principalDetails = new PrincipalDetails(user);
         item1 = saveItem(user, "습관 만들어요", "DEVELOPMENT", "아주 작은 습관의 힘", "제임스 클리어", "미개봉 제품", 100, 6000);
         item2 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 1, 10000);
     }
@@ -64,7 +67,7 @@ public class OrderServiceTest {
         orderItemRequestDtos.add(orderItemDto2);
 
         OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
-        Long orderId = orderService.create(user, request);
+        Long orderId = orderService.create(principalDetails, request);
 
         //when
         orderService.cancel(orderId);
@@ -84,7 +87,7 @@ public class OrderServiceTest {
         orderItemRequestDtos.add(orderItemDto2);
 
         OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
-        Long orderId = orderService.create(user, request);
+        Long orderId = orderService.create(principalDetails, request);
 
         //when
         orderService.cancel(orderId);
@@ -102,7 +105,7 @@ public class OrderServiceTest {
         orderItemRequestDtos.add(orderItemDto);
 
         OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
-        Long orderId = orderService.create(user, request);
+        Long orderId = orderService.create(principalDetails, request);
 
         //when
         orderService.cancel(orderId);
@@ -125,7 +128,7 @@ public class OrderServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            orderService.create(user, request);
+            orderService.create(principalDetails, request);
         });
     }
 
@@ -141,7 +144,7 @@ public class OrderServiceTest {
         OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
 
         //when
-        Long orderId = orderService.create(user, request);
+        Long orderId = orderService.create(principalDetails, request);
 
         //then
         Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
@@ -158,7 +161,7 @@ public class OrderServiceTest {
         OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
 
         //when
-        Long orderId = orderService.create(user, request);
+        Long orderId = orderService.create(principalDetails, request);
 
         //then
         Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
@@ -175,7 +178,7 @@ public class OrderServiceTest {
         OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
 
         //when
-        orderService.create(user, request);
+        orderService.create(principalDetails, request);
 
         //then
         assertThat(item2.getSaleStatus()).isEqualTo(SaleStatus.SOLD_OUT);
@@ -191,7 +194,7 @@ public class OrderServiceTest {
         OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
 
         //when
-        orderService.create(user, request);
+        orderService.create(principalDetails, request);
 
         //then
         assertThat(item1.getStock()).isEqualTo(99);
@@ -209,7 +212,7 @@ public class OrderServiceTest {
         OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
 
         //when
-        Long orderId = orderService.create(user, request);
+        Long orderId = orderService.create(principalDetails, request);
 
         //then
         assertThat(orderItemRepository.count()).isEqualTo(2);
@@ -229,7 +232,7 @@ public class OrderServiceTest {
         OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
 
         //when
-        Long orderId = orderService.create(user, request);
+        Long orderId = orderService.create(principalDetails, request);
 
         //then
         assertThat(orderItemRepository.count()).isEqualTo(1);

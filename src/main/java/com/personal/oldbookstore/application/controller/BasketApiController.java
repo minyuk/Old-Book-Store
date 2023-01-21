@@ -22,7 +22,7 @@ public class BasketApiController {
     @GetMapping("")
     public Page<BasketResponseDto> getList(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                            Pageable pageable) {
-        return basketService.getList(principalDetails.getUser(), pageable);
+        return basketService.getList(principalDetails, pageable);
     }
 
     @DeleteMapping("/items/{itemId}")
@@ -35,7 +35,7 @@ public class BasketApiController {
     public void update(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails,
                        @RequestBody BasketRequestDto dto) {
-        basketService.update(principalDetails.getUser(), itemId, dto);
+        basketService.update(principalDetails, itemId, dto);
     }
 
     @PostMapping("/items/{itemId}")

@@ -65,7 +65,7 @@ class BasketServiceTest {
         Pageable pageable = PageRequest.of(1, 1);
 
         //when
-        Page<BasketResponseDto> basketList = basketService.getList(user, pageable);
+        Page<BasketResponseDto> basketList = basketService.getList(principalDetails, pageable);
 
         //then
         assertThat(basketList.get().count()).isEqualTo(1);
@@ -86,7 +86,7 @@ class BasketServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<BasketResponseDto> basketList = basketService.getList(user, pageable);
+        Page<BasketResponseDto> basketList = basketService.getList(principalDetails, pageable);
 
         //then
         assertThat(basketList.get().count()).isEqualTo(2);
@@ -120,7 +120,7 @@ class BasketServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            basketService.update(user, 10L, updateDto);
+            basketService.update(principalDetails, 10L, updateDto);
         });
     }
 
@@ -135,7 +135,7 @@ class BasketServiceTest {
         BasketRequestDto updateDto = new BasketRequestDto(10);
 
         //when
-        basketService.update(user, item.getId(), updateDto);
+        basketService.update(principalDetails, item.getId(), updateDto);
 
         //then
         Basket basket = basketRepository.findByUserIdAndItemId(user.getId(), item.getId()).orElse(null);
