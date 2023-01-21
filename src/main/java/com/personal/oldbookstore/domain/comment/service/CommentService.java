@@ -3,10 +3,12 @@ package com.personal.oldbookstore.domain.comment.service;
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.comment.dto.CommentRequestDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentResponseDto;
+import com.personal.oldbookstore.domain.comment.dto.CommentUpdateRequestDto;
 import com.personal.oldbookstore.domain.comment.entity.Comment;
 import com.personal.oldbookstore.domain.comment.repository.CommentRepository;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
+import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.util.exception.CustomException;
 import com.personal.oldbookstore.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,14 @@ public class CommentService {
 
     private final ItemRepository itemRepository;
 
+    public void update(PrincipalDetails principalDetails, Long commentId, CommentUpdateRequestDto dto) {
+        Comment comment = findComment(commentId);
+
+        validateUser(principalDetails.getUser(), comment.getUser());
+
+        comment.updateContents(dto.contents());
+    }
+
     public CommentResponseDto create(PrincipalDetails principalDetails, Long itemId, CommentRequestDto dto) {
         if (principalDetails == null) {
             throw new CustomException(ErrorCode.ONLY_USER);
@@ -30,7 +40,7 @@ public class CommentService {
         Item item = findItem(itemId);
 
         Comment comment = Comment.builder()
-                .writer(principalDetails.getUser())
+                .user(principalDetails.getUser())
                 .item(item)
                 .contents(dto.contents())
                 .depth(dto.depth())
@@ -38,6 +48,18 @@ public class CommentService {
                 .build();
 
         return commentRepository.save(comment).toDto();
+    }
+
+    private void validateUser(User loginUser, User writer) {
+        if (!loginUser.getEmail().equals(writer.getEmail())) {
+            throw new CustomException(ErrorCode.EDIT_ACCESS_DENIED);
+        }
+    }
+
+    private Comment findComment(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() ->
+                new CustomException(ErrorCode.EDIT_ACCESS_DENIED)
+        );
     }
 
     private Item findItem(Long id) {

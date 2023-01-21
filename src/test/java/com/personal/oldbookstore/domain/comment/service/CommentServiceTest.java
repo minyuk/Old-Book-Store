@@ -3,6 +3,8 @@ package com.personal.oldbookstore.domain.comment.service;
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.comment.dto.CommentRequestDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentResponseDto;
+import com.personal.oldbookstore.domain.comment.dto.CommentUpdateRequestDto;
+import com.personal.oldbookstore.domain.comment.entity.Comment;
 import com.personal.oldbookstore.domain.comment.repository.CommentRepository;
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
@@ -46,6 +48,54 @@ class CommentServiceTest {
         principalDetails = new PrincipalDetails(user);
 
         item = saveItem(user, "습관 만들어요", "DEVELOPMENT", "아주 작은 습관의 힘", "제임스 클리어", "미개봉 제품", 100, 6000);
+    }
+
+    @Test
+    @DisplayName("댓글 수정 실패 - 작성자 불일치")
+    void updateNotEqual() {
+        //given
+        CommentRequestDto request = new CommentRequestDto(1, "책 상태가 궁금합니다.", null);
+        CommentResponseDto response = commentService.create(principalDetails, item.getId(), request);
+
+        CommentUpdateRequestDto updateRequest = new CommentUpdateRequestDto("수정 테스트");
+
+        PrincipalDetails principalDetails2 = new PrincipalDetails(saveUser("tt@tt.com", "123", "tt"));
+
+        //when
+        //then
+        assertThrows(CustomException.class, () -> {
+            commentService.update(principalDetails2, response.id(), updateRequest);
+        });
+    }
+
+    @Test
+    @DisplayName("댓글 수정 실패 - 존재하지 않는 댓글")
+    void updateNotFound() {
+        //given
+        CommentUpdateRequestDto updateRequest = new CommentUpdateRequestDto("수정 테스트");
+
+        //when
+        //then
+        assertThrows(CustomException.class, () ->
+                commentService.update(principalDetails, 1L, updateRequest)
+        );
+    }
+
+    @Test
+    @DisplayName("댓글 수정 성공")
+    void update() {
+        //given
+        CommentRequestDto request = new CommentRequestDto(1, "책 상태가 궁금합니다.", null);
+        CommentResponseDto response = commentService.create(principalDetails, item.getId(), request);
+
+        CommentUpdateRequestDto updateRequest = new CommentUpdateRequestDto("수정 테스트");
+
+        //when
+        commentService.update(principalDetails, response.id(), updateRequest);
+
+        //then
+        Comment comment = commentRepository.findByIdAndUserId(response.id(), principalDetails.getUser().getId()).orElse(null);
+        assertThat(comment.getContents()).isEqualTo("수정 테스트");
     }
 
     @Test

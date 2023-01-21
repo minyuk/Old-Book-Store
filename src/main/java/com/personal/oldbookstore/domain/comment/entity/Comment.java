@@ -23,7 +23,7 @@ public class Comment extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User writer;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
@@ -40,8 +40,8 @@ public class Comment extends BaseTimeEntity {
     private boolean viewStatus;
 
     @Builder
-    public Comment(User writer, Item item, String contents, Integer depth, Long parentId, Boolean viewStatus) {
-        this.writer = writer;
+    public Comment(User user, Item item, String contents, Integer depth, Long parentId, Boolean viewStatus) {
+        this.user = user;
         this.item = item;
         this.contents = contents;
         this.depth = depth;
@@ -52,13 +52,17 @@ public class Comment extends BaseTimeEntity {
     public CommentResponseDto toDto() {
         return CommentResponseDto.builder()
                 .id(id)
-                .writer(writer.getNickname())
+                .writer(user.getNickname())
                 .contents(setContents())
                 .depth(depth)
                 .parentId(parentId)
                 .viewStatus(viewStatus)
                 .createdDate(getModifiedDate())
                 .build();
+    }
+
+    public void updateContents(String contents) {
+        this.contents = contents;
     }
 
     public void updateViewStatusFalse() {
