@@ -24,14 +24,6 @@ public class CommentService {
 
     private final ItemRepository itemRepository;
 
-    public void update(PrincipalDetails principalDetails, Long commentId, CommentUpdateRequestDto dto) {
-        Comment comment = findComment(commentId);
-
-        validateUser(principalDetails.getUser(), comment.getUser());
-
-        comment.updateContents(dto.contents());
-    }
-
     public CommentResponseDto create(PrincipalDetails principalDetails, Long itemId, CommentRequestDto dto) {
         if (principalDetails == null) {
             throw new CustomException(ErrorCode.ONLY_USER);
@@ -48,6 +40,22 @@ public class CommentService {
                 .build();
 
         return commentRepository.save(comment).toDto();
+    }
+
+    public void update(PrincipalDetails principalDetails, Long commentId, CommentUpdateRequestDto dto) {
+        Comment comment = findComment(commentId);
+
+        validateUser(principalDetails.getUser(), comment.getUser());
+
+        comment.updateContents(dto.contents());
+    }
+
+    public void delete(PrincipalDetails principalDetails, Long commentId) {
+        Comment comment = findComment(commentId);
+
+        validateUser(principalDetails.getUser(), comment.getUser());
+
+        comment.updateViewStatusFalse();
     }
 
     private void validateUser(User loginUser, User writer) {

@@ -51,6 +51,49 @@ class CommentServiceTest {
     }
 
     @Test
+    @DisplayName("댓글 삭제 실패 - 작성자 불일치")
+    void deleteNotEqual() {
+        //given
+        CommentRequestDto request = new CommentRequestDto(1, "책 상태가 궁금합니다.", null);
+        CommentResponseDto response = commentService.create(principalDetails, item.getId(), request);
+
+        User user2 = saveUser("test1@abc.com", "11111234!@", "tester1234");
+        PrincipalDetails principalDetails2 = new PrincipalDetails(user2);
+
+        //when
+        //then
+        assertThrows(CustomException.class, () ->
+                commentService.delete(principalDetails2, response.id())
+        );
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 실패 - 존재하지 않는 댓글")
+    void deleteNotFound() {
+        //given
+        //when
+        //then
+        assertThrows(CustomException.class, () ->
+                commentService.delete(principalDetails, 1L)
+        );
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 성공 - 댓글 유지, 내용 변경")
+    void delete() {
+        //given
+        CommentRequestDto request = new CommentRequestDto(1, "책 상태가 궁금합니다.", null);
+        CommentResponseDto response = commentService.create(principalDetails, item.getId(), request);
+
+        //when
+        commentService.delete(principalDetails, response.id());
+
+        //then
+        Comment comment = commentRepository.findById(response.id()).orElse(null);
+        assertThat(comment.getContents()).isEqualTo("삭제된 댓글입니다.");
+    }
+
+    @Test
     @DisplayName("댓글 수정 실패 - 작성자 불일치")
     void updateNotEqual() {
         //given
@@ -94,7 +137,7 @@ class CommentServiceTest {
         commentService.update(principalDetails, response.id(), updateRequest);
 
         //then
-        Comment comment = commentRepository.findByIdAndUserId(response.id(), principalDetails.getUser().getId()).orElse(null);
+        Comment comment = commentRepository.findById(response.id()).orElse(null);
         assertThat(comment.getContents()).isEqualTo("수정 테스트");
     }
 

@@ -20,6 +20,13 @@ public class CommentApiController {
 
     private final CommentService commentService;
 
+    @PostMapping("/items/{itemId}")
+    public ResponseEntity<CommentResponseDto> create(@PathVariable Long itemId,
+                                                     @AuthenticationPrincipal PrincipalDetails principalDetails,
+                                                     @Valid @RequestBody CommentRequestDto dto) {
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.create(principalDetails, itemId, dto));
+    }
+
     @PatchMapping("/{commentId}")
     public void update(@PathVariable Long commentId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails,
@@ -27,10 +34,10 @@ public class CommentApiController {
         commentService.update(principalDetails, commentId, dto);
     }
 
-    @PostMapping("/items/{itemId}")
-    public ResponseEntity<CommentResponseDto> create(@PathVariable Long itemId,
-                                                     @AuthenticationPrincipal PrincipalDetails principalDetails,
-                                                     @Valid @RequestBody CommentRequestDto dto) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.create(principalDetails, itemId, dto));
+    @DeleteMapping("/{commentId}")
+    public void delete(@PathVariable Long commentId,
+                       @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        commentService.delete(principalDetails, commentId);
     }
+
 }

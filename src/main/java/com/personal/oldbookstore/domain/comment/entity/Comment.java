@@ -53,7 +53,7 @@ public class Comment extends BaseTimeEntity {
         return CommentResponseDto.builder()
                 .id(id)
                 .writer(user.getNickname())
-                .contents(setContents())
+                .contents(contents)
                 .depth(depth)
                 .parentId(parentId)
                 .viewStatus(viewStatus)
@@ -67,6 +67,7 @@ public class Comment extends BaseTimeEntity {
 
     public void updateViewStatusFalse() {
         this.viewStatus = false;
+        setContents();
     }
 
     private String setContents() {
