@@ -12,6 +12,8 @@ import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.util.exception.CustomException;
 import com.personal.oldbookstore.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,11 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     private final ItemRepository itemRepository;
+
+
+    public Page<CommentResponseDto> getList(Long itemId, Pageable pageable) {
+        return commentRepository.findAllByItemId(itemId, pageable).map(Comment::toDto);
+    }
 
     public CommentResponseDto create(PrincipalDetails principalDetails, Long itemId, CommentRequestDto dto) {
         if (principalDetails == null) {

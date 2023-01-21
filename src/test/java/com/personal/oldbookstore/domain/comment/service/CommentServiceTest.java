@@ -17,6 +17,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +51,46 @@ class CommentServiceTest {
         principalDetails = new PrincipalDetails(user);
 
         item = saveItem(user, "습관 만들어요", "DEVELOPMENT", "아주 작은 습관의 힘", "제임스 클리어", "미개봉 제품", 100, 6000);
+    }
+
+    @Test
+    @DisplayName("상품 댓글 리스트 조회 성공 - 페이징")
+    void getListPage() {
+        //given
+        CommentRequestDto request1 = new CommentRequestDto(1, "책 상태가 궁금합니다.", null);
+        CommentResponseDto response1 = commentService.create(principalDetails, item.getId(), request1);
+        CommentRequestDto request2 = new CommentRequestDto(2, "책 상태가 궁금합니다.", response1.id());
+        commentService.create(principalDetails, item.getId(), request2);
+        CommentRequestDto request3 = new CommentRequestDto(3, "책 상태가 궁금합니다.", response1.id());
+        commentService.create(principalDetails, item.getId(), request3);
+
+        Pageable pageable = PageRequest.of(1, 2);
+
+        //when
+        Page<CommentResponseDto> comments = commentService.getList(item.getId(), pageable);
+
+        //then
+        assertThat(comments.get().count()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("상품 댓글 리스트 조회 성공")
+    void getList() {
+        //given
+        CommentRequestDto request1 = new CommentRequestDto(1, "책 상태가 궁금합니다.", null);
+        CommentResponseDto response1 = commentService.create(principalDetails, item.getId(), request1);
+        CommentRequestDto request2 = new CommentRequestDto(2, "책 상태가 궁금합니다.", response1.id());
+        commentService.create(principalDetails, item.getId(), request2);
+        CommentRequestDto request3 = new CommentRequestDto(3, "책 상태가 궁금합니다.", response1.id());
+        commentService.create(principalDetails, item.getId(), request3);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        Page<CommentResponseDto> comments = commentService.getList(item.getId(), pageable);
+
+        //then
+        assertThat(comments.get().count()).isEqualTo(3);
     }
 
     @Test

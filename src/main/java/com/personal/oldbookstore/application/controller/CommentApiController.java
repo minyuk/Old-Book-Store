@@ -6,6 +6,8 @@ import com.personal.oldbookstore.domain.comment.dto.CommentResponseDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentUpdateRequestDto;
 import com.personal.oldbookstore.domain.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +21,12 @@ import javax.validation.Valid;
 public class CommentApiController {
 
     private final CommentService commentService;
+
+    @GetMapping("/items/{itemId}")
+    public Page<CommentResponseDto> getList(@PathVariable Long itemId,
+                                            Pageable pageable) {
+        return commentService.getList(itemId, pageable);
+    }
 
     @PostMapping("/items/{itemId}")
     public ResponseEntity<CommentResponseDto> create(@PathVariable Long itemId,
