@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.domain.comment.service;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
+import com.personal.oldbookstore.domain.comment.dto.CommentMyPageResponseDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentRequestDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentResponseDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentUpdateRequestDto;
@@ -25,6 +26,10 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     private final ItemRepository itemRepository;
+
+    public Page<CommentMyPageResponseDto> getMyList(PrincipalDetails principalDetails, Pageable pageable) {
+        return commentRepository.findAllByUserId(principalDetails.getUser().getId(), pageable).map(Comment::toMyDto);
+    }
 
 
     public Page<CommentResponseDto> getList(Long itemId, Pageable pageable) {

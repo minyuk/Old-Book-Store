@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.domain.comment.entity;
 
 import com.personal.oldbookstore.domain.base.BaseTimeEntity;
+import com.personal.oldbookstore.domain.comment.dto.CommentMyPageResponseDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentResponseDto;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.user.entity.User;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @NoArgsConstructor
@@ -57,7 +59,16 @@ public class Comment extends BaseTimeEntity {
                 .depth(depth)
                 .parentId(parentId)
                 .viewStatus(viewStatus)
-                .createdDate(getModifiedDate())
+                .createdDate(getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .build();
+    }
+
+    public CommentMyPageResponseDto toMyDto() {
+        return CommentMyPageResponseDto.builder()
+                .itemId(item.getId())
+                .itemName(item.getName())
+                .contents(contents)
+                .createdDate(getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .build();
     }
 

@@ -8,4 +8,6 @@ public interface CommentRepositoryCustom {
 
     Page<Comment> findAllByItemId(Long itemId, Pageable pageable);
 
+    Page<Comment> findAllByUserId(Long userId, Pageable pageable);
+
 }

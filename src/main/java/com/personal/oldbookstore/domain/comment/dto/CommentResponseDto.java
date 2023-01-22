@@ -12,6 +12,6 @@ public record CommentResponseDto(
         Integer depth,
         Long parentId,
         Boolean viewStatus,
-        LocalDateTime createdDate
+        String createdDate
 ) {
 }

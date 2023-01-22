@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.domain.comment.service;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
+import com.personal.oldbookstore.domain.comment.dto.CommentMyPageResponseDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentRequestDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentResponseDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentUpdateRequestDto;
@@ -51,6 +52,46 @@ class CommentServiceTest {
         principalDetails = new PrincipalDetails(user);
 
         item = saveItem(user, "습관 만들어요", "DEVELOPMENT", "아주 작은 습관의 힘", "제임스 클리어", "미개봉 제품", 100, 6000);
+    }
+
+    @Test
+    @DisplayName("마이페이지 댓글 리스트 조회 성공 - 페이징")
+    void getMyListPage() {
+        //given
+        CommentRequestDto request1 = new CommentRequestDto(1, "책 상태가 궁금합니다.", null);
+        CommentResponseDto response1 = commentService.create(principalDetails, item.getId(), request1);
+        CommentRequestDto request2 = new CommentRequestDto(2, "책 상태가 궁금합니다.", response1.id());
+        commentService.create(principalDetails, item.getId(), request2);
+        CommentRequestDto request3 = new CommentRequestDto(3, "책 상태가 궁금합니다.", response1.id());
+        commentService.create(principalDetails, item.getId(), request3);
+
+        Pageable pageable = PageRequest.of(1, 2);
+
+        //when
+        Page<CommentMyPageResponseDto> comments = commentService.getMyList(principalDetails, pageable);
+
+        //then
+        assertThat(comments.get().count()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("마이페이지 댓글 리스트 조회 성공")
+    void getMyList() {
+        //given
+        CommentRequestDto request1 = new CommentRequestDto(1, "책 상태가 궁금합니다.", null);
+        CommentResponseDto response1 = commentService.create(principalDetails, item.getId(), request1);
+        CommentRequestDto request2 = new CommentRequestDto(2, "책 상태가 궁금합니다.", response1.id());
+        commentService.create(principalDetails, item.getId(), request2);
+        CommentRequestDto request3 = new CommentRequestDto(3, "책 상태가 궁금합니다.", response1.id());
+        commentService.create(principalDetails, item.getId(), request3);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        Page<CommentMyPageResponseDto> comments = commentService.getMyList(principalDetails, pageable);
+
+        //then
+        assertThat(comments.get().count()).isEqualTo(3);
     }
 
     @Test

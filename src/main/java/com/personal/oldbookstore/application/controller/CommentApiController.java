@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.application.controller;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
+import com.personal.oldbookstore.domain.comment.dto.CommentMyPageResponseDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentRequestDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentResponseDto;
 import com.personal.oldbookstore.domain.comment.dto.CommentUpdateRequestDto;
@@ -21,6 +22,12 @@ import javax.validation.Valid;
 public class CommentApiController {
 
     private final CommentService commentService;
+
+    @GetMapping("/myList")
+    public Page<CommentMyPageResponseDto> getMyList(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                                    Pageable pageable) {
+        return commentService.getMyList(principalDetails, pageable);
+    }
 
     @GetMapping("/items/{itemId}")
     public Page<CommentResponseDto> getList(@PathVariable Long itemId,
