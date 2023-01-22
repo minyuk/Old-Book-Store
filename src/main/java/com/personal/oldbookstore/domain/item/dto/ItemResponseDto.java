@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @NoArgsConstructor
@@ -20,7 +21,7 @@ public class ItemResponseDto{
     private Integer price;
     private Long viewCount;
     private String saleStatus;
-    private LocalDateTime createdDate;
+    private String createdDate;
     private Boolean likeStatus = false;
 
     @Builder
@@ -37,7 +38,7 @@ public class ItemResponseDto{
         this.price = price;
         this.viewCount = viewCount;
         this.saleStatus = saleStatus;
-        this.createdDate = createdDate;
+        this.createdDate = createdDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
     }
 
     public void setLikeStatus(Boolean status) {

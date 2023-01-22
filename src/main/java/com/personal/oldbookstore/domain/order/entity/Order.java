@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,7 +73,7 @@ public class Order extends BaseTimeEntity {
                 .address(address)
                 .payment(payment)
                 .orderStatus(orderStatus)
-                .orderDate(orderDate)
+                .orderDate(orderDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))
                 .totalPrice(getTotalPrice())
                 .orderItemResponseDtos(orderItems.stream()
                         .map(OrderItem::toDto).collect(Collectors.toList()))
@@ -83,7 +84,7 @@ public class Order extends BaseTimeEntity {
         return OrderListResponseDto.builder()
                 .id(id)
                 .orderStatus(orderStatus)
-                .orderDate(orderDate)
+                .orderDate(orderDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))
                 .totalPrice(getTotalPrice())
                 .orderItemResponseDtos(orderItems.stream()
                         .map(OrderItem::toDto).collect(Collectors.toList()))

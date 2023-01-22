@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -149,7 +150,7 @@ public class Item extends BaseTimeEntity {
                 .category(getCategory().getValue())
                 .viewCount(viewCount)
                 .saleStatus(getSaleStatus().getValue())
-                .createdDate(getModifiedDate())
+                .createdDate(getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))
                 .build();
     }
 
