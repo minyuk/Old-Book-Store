@@ -12,6 +12,6 @@ public record ItemListResponseDto(
         String category,
         Long viewCount,
         String saleStatus,
-        LocalDateTime createdDate
+        String createdDate
 ) {
 }

@@ -45,9 +45,9 @@ public class ItemService {
         return itemResponseDto;
     }
 
-    public Long create(User user, ItemRequestDto dto) {
+    public Long create(PrincipalDetails principalDetails, ItemRequestDto dto) {
         Item item = Item.builder()
-                .user(user)
+                .user(principalDetails.getUser())
                 .name(dto.name())
                 .category(dto.category())
                 .bookTitle(dto.bookTitle())
@@ -60,20 +60,20 @@ public class ItemService {
         return itemRepository.save(item).getId();
     }
 
-    public void update(Long itemId, User user, ItemRequestDto dto) {
+    public void update(Long itemId, PrincipalDetails principalDetails, ItemRequestDto dto) {
         Item item = findItem(itemId);
 
-        if (!user.getEmail().equals(item.getUser().getEmail())) {
+        if (!principalDetails.getUser().getEmail().equals(item.getUser().getEmail())) {
             throw new CustomException(ErrorCode.EDIT_ACCESS_DENIED);
         }
 
         item.updateItem(dto);
     }
 
-    public void delete(Long itemId, User user) {
+    public void delete(Long itemId, PrincipalDetails principalDetails) {
         Item item = findItem(itemId);
 
-        if (!user.getEmail().equals(item.getUser().getEmail())) {
+        if (!principalDetails.getUser().getEmail().equals(item.getUser().getEmail())) {
             throw new CustomException(ErrorCode.DELETE_ACCESS_DENIED);
         }
 

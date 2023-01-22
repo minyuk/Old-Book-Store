@@ -27,11 +27,11 @@ public class LikeItemService {
         return likeItemRepository.findAllByUserId(id, pageable).map(LikeItem::toDto);
     }
 
-    public void delete(User user, Long itemId) {
+    public void delete(PrincipalDetails principalDetails, Long itemId) {
         Item item = getItem(itemId);
         item.decreaseLikeCount();
 
-        likeItemRepository.deleteByUserIdAndItemId(user.getId(), itemId);
+        likeItemRepository.deleteByUserIdAndItemId(principalDetails.getUser().getId(), itemId);
     }
 
     public Long create(PrincipalDetails principalDetails, Long itemId) {

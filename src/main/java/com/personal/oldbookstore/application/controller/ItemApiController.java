@@ -40,20 +40,20 @@ public class ItemApiController {
     public ResponseEntity<Long> create(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                        @Valid @RequestBody ItemRequestDto dto) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(itemService.create(principalDetails.getUser(), dto));
+                .body(itemService.create(principalDetails, dto));
     }
 
     @PatchMapping("/{itemId}")
     public void update(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails,
                        @Valid @RequestBody ItemRequestDto dto) {
-        itemService.update(itemId,principalDetails.getUser(), dto);
+        itemService.update(itemId,principalDetails, dto);
     }
 
     @DeleteMapping("/{itemId}")
     public void delete(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        itemService.delete(itemId, principalDetails.getUser());
+        itemService.delete(itemId, principalDetails);
     }
 
 

@@ -33,7 +33,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
 
         Long total = queryFactory.select(item.count())
                 .from(item)
-                .where(eqCategory(category))
+                .where(eqCategory(category), containsKeyword(keyword))
                 .fetchOne();
 
         return new PageImpl<>(items, pageable, total);

@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.order.service;
 
+import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
 import com.personal.oldbookstore.domain.order.dto.OrderItemRequestDto;
@@ -45,12 +46,12 @@ public class OrderService {
         findOrder(orderId).cancel();
     }
 
-    public Long create(User user, OrderRequestDto dto) {
+    public Long create(PrincipalDetails principalDetails, OrderRequestDto dto) {
 
         List<OrderItem> orderItems = createOrderItems(dto);
 
         Order order = Order.builder()
-                .user(user)
+                .user(principalDetails.getUser())
                 .orderItems(orderItems)
                 .recipient(dto.recipient())
                 .phone(dto.phone())

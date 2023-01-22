@@ -25,16 +25,16 @@ public class BasketService {
 
     private final ItemRepository itemRepository;
 
-    public Page<BasketResponseDto> getList(User user, Pageable pageable) {
-        return basketRepository.findAllByUserId(user.getId(), pageable).map(Basket::toDto);
+    public Page<BasketResponseDto> getList(PrincipalDetails principalDetails, Pageable pageable) {
+        return basketRepository.findAllByUserId(principalDetails.getUser().getId(), pageable).map(Basket::toDto);
     }
 
     public void delete(User user, Long itemId) {
         basketRepository.deleteByUserIdAndItemId(user.getId(), itemId);
     }
 
-    public void update(User user, Long itemId, BasketRequestDto dto) {
-        Basket basket = basketRepository.findByUserIdAndItemId(user.getId(), itemId).orElseThrow(() ->
+    public void update(PrincipalDetails principalDetails, Long itemId, BasketRequestDto dto) {
+        Basket basket = basketRepository.findByUserIdAndItemId(principalDetails.getUser().getId(), itemId).orElseThrow(() ->
                 new CustomException(ErrorCode.ID_NOT_FOUND));
 
         basket.updateCount(dto.count());

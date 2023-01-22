@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.domain.basket.service;
 
 
+import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.basket.dto.BasketRequestDto;
 import com.personal.oldbookstore.domain.basket.dto.BasketResponseDto;
 import com.personal.oldbookstore.domain.basket.entity.Basket;
@@ -41,10 +42,12 @@ class BasketServiceTest {
     private ItemRepository itemRepository;
 
     private User user;
+    private PrincipalDetails principalDetails;
 
     @BeforeEach
     void createUserWithItem() {
         user = saveUser("test@abc.com", "1234!@", "tester");
+        principalDetails = new PrincipalDetails(user);
     }
 
     @Test
@@ -53,16 +56,16 @@ class BasketServiceTest {
         //given
         Item item1 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
         BasketRequestDto dto1 = new BasketRequestDto(1);
-        basketService.create(user, item1.getId(), dto1);
+        basketService.create(principalDetails, item1.getId(), dto1);
 
         Item item2 = saveItem(user, "Test", "IT", "testing", "tester", "test", 100, 10000);
         BasketRequestDto dto2 = new BasketRequestDto(1);
-        basketService.create(user, item2.getId(), dto2);
+        basketService.create(principalDetails, item2.getId(), dto2);
 
         Pageable pageable = PageRequest.of(1, 1);
 
         //when
-        Page<BasketResponseDto> basketList = basketService.getList(user, pageable);
+        Page<BasketResponseDto> basketList = basketService.getList(principalDetails, pageable);
 
         //then
         assertThat(basketList.get().count()).isEqualTo(1);
@@ -74,16 +77,16 @@ class BasketServiceTest {
         //given
         Item item1 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
         BasketRequestDto dto1 = new BasketRequestDto(1);
-        basketService.create(user, item1.getId(), dto1);
+        basketService.create(principalDetails, item1.getId(), dto1);
 
         Item item2 = saveItem(user, "Test", "IT", "testing", "tester", "test", 100, 10000);
         BasketRequestDto dto2 = new BasketRequestDto(1);
-        basketService.create(user, item2.getId(), dto2);
+        basketService.create(principalDetails, item2.getId(), dto2);
 
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<BasketResponseDto> basketList = basketService.getList(user, pageable);
+        Page<BasketResponseDto> basketList = basketService.getList(principalDetails, pageable);
 
         //then
         assertThat(basketList.get().count()).isEqualTo(2);
@@ -95,7 +98,7 @@ class BasketServiceTest {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
         BasketRequestDto createDto = new BasketRequestDto(1);
-        basketService.create(user, item.getId(), createDto);
+        basketService.create(principalDetails, item.getId(), createDto);
 
         //when
         basketService.delete(user, item.getId());
@@ -110,14 +113,14 @@ class BasketServiceTest {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
         BasketRequestDto createDto = new BasketRequestDto(1);
-        basketService.create(user, item.getId(), createDto);
+        basketService.create(principalDetails, item.getId(), createDto);
 
         BasketRequestDto updateDto = new BasketRequestDto(10);
 
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            basketService.update(user, 10L, updateDto);
+            basketService.update(principalDetails, 10L, updateDto);
         });
     }
 
@@ -127,12 +130,12 @@ class BasketServiceTest {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
         BasketRequestDto createDto = new BasketRequestDto(1);
-        basketService.create(user, item.getId(), createDto);
+        basketService.create(principalDetails, item.getId(), createDto);
 
         BasketRequestDto updateDto = new BasketRequestDto(10);
 
         //when
-        basketService.update(user, item.getId(), updateDto);
+        basketService.update(principalDetails, item.getId(), updateDto);
 
         //then
         Basket basket = basketRepository.findByUserIdAndItemId(user.getId(), item.getId()).orElse(null);
@@ -145,12 +148,12 @@ class BasketServiceTest {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
         BasketRequestDto dto = new BasketRequestDto(1);
-        basketService.create(user, item.getId(), dto);
+        basketService.create(principalDetails, item.getId(), dto);
 
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            basketService.create(user, item.getId(), dto);
+            basketService.create(principalDetails, item.getId(), dto);
         });
     }
 
@@ -177,7 +180,7 @@ class BasketServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            basketService.create(user, 1L, dto);
+            basketService.create(principalDetails, 1L, dto);
         });
     }
 
@@ -189,7 +192,7 @@ class BasketServiceTest {
         BasketRequestDto dto = new BasketRequestDto(1);
 
         //when
-        basketService.create(user, item.getId(), dto);
+        basketService.create(principalDetails, item.getId(), dto);
 
         //then
         assertThat(basketRepository.count()).isEqualTo(1);
