@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.domain.order.service;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
+import com.personal.oldbookstore.domain.basket.dto.BasketResponseDto;
 import com.personal.oldbookstore.domain.basket.entity.Basket;
 import com.personal.oldbookstore.domain.basket.repository.BasketRepository;
 import com.personal.oldbookstore.domain.item.entity.Category;
@@ -265,6 +266,25 @@ public class OrderServiceTest {
 
         Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
         assertThat(order.getRecipient()).isEqualTo("tester");
+    }
+
+    @Test
+    @DisplayName("장바구니 상품 불러오기")
+    void load() {
+        //given
+        Basket basket1 = createBasket(principalDetails.getUser(), item1, 1);
+        Basket basket2 = createBasket(principalDetails.getUser(), item2, 1);
+
+        List<Long> itemIds = new ArrayList<>();
+        itemIds.add(basket1.getItem().getId());
+        itemIds.add(basket2.getItem().getId());
+        principalDetails.setItemIdList(itemIds);
+
+        //when
+        List<BasketResponseDto> basketList = orderService.getBasketList(principalDetails.getItemIdList());
+
+        //then
+        assertThat(basketList.size()).isEqualTo(2);
     }
 
     private Basket createBasket(User user, Item item, Integer count) {

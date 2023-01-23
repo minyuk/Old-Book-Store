@@ -1,6 +1,8 @@
 package com.personal.oldbookstore.domain.order.service;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
+import com.personal.oldbookstore.domain.basket.dto.BasketResponseDto;
+import com.personal.oldbookstore.domain.basket.entity.Basket;
 import com.personal.oldbookstore.domain.basket.repository.BasketRepository;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -62,6 +65,11 @@ public class OrderService {
         deleteBasket(principalDetails.getUser(), orderItems);
 
         return orderRepository.save(order).getId();
+    }
+
+    public List<BasketResponseDto> getBasketList(List<Long> itemIds) {
+        return basketRepository.findAllByItemIdIn(itemIds).stream()
+                .map(Basket::toDto).collect(Collectors.toList());
     }
 
     private Order findOrder(Long id) {
