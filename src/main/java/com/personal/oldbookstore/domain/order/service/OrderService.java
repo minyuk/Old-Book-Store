@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.domain.order.service;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
+import com.personal.oldbookstore.domain.basket.repository.BasketRepository;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
 import com.personal.oldbookstore.domain.order.dto.OrderItemRequestDto;
@@ -30,6 +31,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
 
+    private final BasketRepository basketRepository;
+
     public Page<OrderListResponseDto> getList(Pageable pageable) {
         return orderRepository.findAll(pageable).map(Order::toDtoList);
     }
@@ -38,9 +41,6 @@ public class OrderService {
         return findOrder(orderId).toDto();
     }
 
-    public List<Order> findAllByItemId(Long itemId) {
-        return orderRepository.findAllByItemId(itemId);
-    }
 
     public void cancel(Long orderId) {
         findOrder(orderId).cancel();
@@ -58,6 +58,8 @@ public class OrderService {
                 .address(dto.address())
                 .payment(dto.payment())
                 .build();
+
+        deleteBasket(principalDetails.getUser(), orderItems);
 
         return orderRepository.save(order).getId();
     }
@@ -86,6 +88,12 @@ public class OrderService {
         }
 
         return orderItems;
+    }
+
+    private void deleteBasket(User user, List<OrderItem> orderItems) {
+        for (OrderItem orderItem : orderItems) {
+            basketRepository.deleteByUserIdAndItemId(user.getId(), orderItem.getItem().getId());
+        }
     }
 
 }

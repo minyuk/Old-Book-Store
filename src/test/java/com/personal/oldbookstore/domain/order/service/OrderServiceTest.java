@@ -1,6 +1,8 @@
 package com.personal.oldbookstore.domain.order.service;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
+import com.personal.oldbookstore.domain.basket.entity.Basket;
+import com.personal.oldbookstore.domain.basket.repository.BasketRepository;
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.entity.SaleStatus;
@@ -43,6 +45,8 @@ public class OrderServiceTest {
     private ItemRepository itemRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BasketRepository basketRepository;
 
     private User user;
     private PrincipalDetails principalDetails;
@@ -130,6 +134,27 @@ public class OrderServiceTest {
         assertThrows(CustomException.class, () -> {
             orderService.create(principalDetails, request);
         });
+    }
+
+    @Test
+    @DisplayName("상품 주문 성공 - 주문한 상품 장바구니에서 삭제")
+    void orderDeleteBasket() {
+        //given
+        createBasket(principalDetails.getUser(), item1, 2);
+        createBasket(principalDetails.getUser(), item2, 1);
+
+        OrderItemRequestDto orderItemDto1 = createOrderItemDto(item1.getId(), 2);
+        orderItemRequestDtos.add(orderItemDto1);
+        OrderItemRequestDto orderItemDto2 = createOrderItemDto(item2.getId(), 1);
+        orderItemRequestDtos.add(orderItemDto2);
+
+        OrderRequestDto request = createOrderDto(orderItemRequestDtos, "tester", "01012345678", "CARD");
+
+        //when
+        orderService.create(principalDetails, request);
+
+        //then
+        assertThat(basketRepository.count()).isEqualTo(0);
     }
 
     @Test
@@ -241,6 +266,17 @@ public class OrderServiceTest {
         Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
         assertThat(order.getRecipient()).isEqualTo("tester");
     }
+
+    private Basket createBasket(User user, Item item, Integer count) {
+        Basket basket = Basket.builder()
+                .user(user)
+                .item(item)
+                .count(count)
+                .build();
+
+        return basketRepository.save(basket);
+    }
+
     private OrderItemRequestDto createOrderItemDto(Long itemId, Integer count) {
         return new OrderItemRequestDto(itemId, count);
     }
