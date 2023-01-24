@@ -65,6 +65,9 @@ public class Item extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "item", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemFile> files = new ArrayList<>();
+
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeItem> likeItems = new ArrayList<>();
 

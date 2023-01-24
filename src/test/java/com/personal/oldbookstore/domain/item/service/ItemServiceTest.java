@@ -6,6 +6,7 @@ import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
+import com.personal.oldbookstore.domain.item.repository.ItemFileRepository;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
 import com.personal.oldbookstore.domain.order.entity.Order;
 import com.personal.oldbookstore.domain.order.entity.OrderItem;
@@ -46,6 +47,9 @@ public class ItemServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private ItemFileRepository itemFileRepository;
+
     private User user;
     private PrincipalDetails principalDetails;
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -65,8 +69,8 @@ public class ItemServiceTest {
         ItemRequestDto request2 = createItem("알고리즘 인터뷰", "IT", "혼자 공부하는 자바", "미녁",
                 "독학하기 좋아요", 2, 8000);
 
-        itemService.create(principalDetails, request1);
-        itemService.create(principalDetails, request2);
+        itemService.create(principalDetails, request1, null);
+        itemService.create(principalDetails, request2, null);
 
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -89,9 +93,9 @@ public class ItemServiceTest {
                 "제임스 클리어", "가독성이 좋아요", 5, 5000);
 
 
-        itemService.create(principalDetails, request1);
-        itemService.create(principalDetails, request2);
-        itemService.create(principalDetails, request3);
+        itemService.create(principalDetails, request1, null);
+        itemService.create(principalDetails, request2, null);
+        itemService.create(principalDetails, request3, null);
 
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -111,8 +115,8 @@ public class ItemServiceTest {
         ItemRequestDto request2 = createItem("습관 만들어요", "DEVELOPMENT", "아주 작은 습관의 힘",
                 "제임스 클리어", "가독성이 좋아요", 5, 5000);
 
-        itemService.create(principalDetails, request1);
-        itemService.create(principalDetails, request2);
+        itemService.create(principalDetails, request1, null);
+        itemService.create(principalDetails, request2, null);
 
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -132,8 +136,8 @@ public class ItemServiceTest {
         ItemRequestDto request2 = createItem("습관 만들어요", "DEVELOPMENT", "아주 작은 습관의 힘",
                 "제임스 클리어", "가독성이 좋아요", 5, 5000);
 
-        Long itemId = itemService.create(principalDetails, request1);
-        Long itemId2 = itemService.create(principalDetails, request2);
+        Long itemId = itemService.create(principalDetails, request1, null);
+        Long itemId2 = itemService.create(principalDetails, request2, null);
 
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -150,7 +154,7 @@ public class ItemServiceTest {
         //given
         ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
-        Long itemId = itemService.create(principalDetails, request);
+        Long itemId = itemService.create(principalDetails, request, null);
 
         //when
         itemService.get(principalDetails, itemId);
@@ -180,7 +184,7 @@ public class ItemServiceTest {
         //given
         ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
-        Long itemId = itemService.create(principalDetails, request);
+        Long itemId = itemService.create(principalDetails, request, null);
 
         //when
         ItemResponseDto response = itemService.get(principalDetails, itemId);
@@ -195,7 +199,7 @@ public class ItemServiceTest {
         //given
         ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
-        Long itemId = itemService.create(principalDetails, request);
+        Long itemId = itemService.create(principalDetails, request, null);
 
         User user2 = saveUser("test2@efg.com", "1111!!!", "tester2");
         PrincipalDetails principalDetails2 = new PrincipalDetails(user2);
@@ -205,7 +209,7 @@ public class ItemServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-           itemService.update(itemId, principalDetails2, update);
+           itemService.update(itemId, principalDetails2, update, null, null);
         });
     }
 
@@ -219,7 +223,7 @@ public class ItemServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            itemService.update(1L, principalDetails, request);
+            itemService.update(1L, principalDetails, request, null, null);
         });
     }
 
@@ -230,13 +234,13 @@ public class ItemServiceTest {
         ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
 
-        Long itemId = itemService.create(principalDetails, request);
+        Long itemId = itemService.create(principalDetails, request, null);
 
         ItemRequestDto update = createItem("상품명 수정합니다", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
 
         //when
-        itemService.update(itemId, principalDetails, update);
+        itemService.update(itemId, principalDetails, update, null, null);
 
         //then
         Item item = itemRepository.findById(itemId).orElse(null);
@@ -249,7 +253,7 @@ public class ItemServiceTest {
         //given
         ItemRequestDto itemRequestDto = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
-        Long itemId = itemService.create(principalDetails, itemRequestDto);
+        Long itemId = itemService.create(principalDetails, itemRequestDto, null);
 
         OrderItem orderItem = createOrderItem(itemId, 1);
         orderItems.add(orderItem);
@@ -268,7 +272,7 @@ public class ItemServiceTest {
         //given
         ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
-        Long itemId = itemService.create(principalDetails, request);
+        Long itemId = itemService.create(principalDetails, request, null);
 
         User user2 = saveUser("test2@efg.com", "1111!!!", "tester2");
         PrincipalDetails principalDetails2 = new PrincipalDetails(user2);
@@ -298,7 +302,7 @@ public class ItemServiceTest {
         ItemRequestDto request = createItem("자바 팔아요", "IT", "Java의 정석", "남궁성",
                 "깨끗해요", 2, 5000);
 
-        Long itemId = itemService.create(principalDetails, request);
+        Long itemId = itemService.create(principalDetails, request, null);
 
         //when
         itemService.delete(itemId, principalDetails);
@@ -315,7 +319,7 @@ public class ItemServiceTest {
                 "깨끗해요", 2, 5000);
 
         //when
-        Long itemId = itemService.create(principalDetails, request);
+        Long itemId = itemService.create(principalDetails, request, null);
 
         //then
         assertThat(itemRepository.count()).isEqualTo(1);
