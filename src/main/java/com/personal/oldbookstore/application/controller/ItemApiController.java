@@ -46,11 +46,13 @@ public class ItemApiController {
                 .body(itemService.create(principalDetails, dto, fileList));
     }
 
-    @PatchMapping("/{itemId}")
+    @PostMapping("/{itemId}")
     public void update(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails,
-                       @Valid @RequestBody ItemRequestDto dto) {
-        itemService.update(itemId,principalDetails, dto);
+                       @Valid @RequestPart(value = "jsonData") ItemRequestDto dto,
+                       @RequestPart(value = "saveFileList") List<MultipartFile> saveFileList,
+                       @RequestPart(value = "removeFileList") List<String> removeFileList) {
+        itemService.update(itemId, principalDetails, dto, saveFileList, removeFileList);
     }
 
     @DeleteMapping("/{itemId}")

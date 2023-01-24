@@ -209,7 +209,7 @@ public class ItemServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-           itemService.update(itemId, principalDetails2, update);
+           itemService.update(itemId, principalDetails2, update, null, null);
         });
     }
 
@@ -223,7 +223,7 @@ public class ItemServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            itemService.update(1L, principalDetails, request);
+            itemService.update(1L, principalDetails, request, null, null);
         });
     }
 
@@ -240,7 +240,7 @@ public class ItemServiceTest {
                 "깨끗해요", 2, 5000);
 
         //when
-        itemService.update(itemId, principalDetails, update);
+        itemService.update(itemId, principalDetails, update, null, null);
 
         //then
         Item item = itemRepository.findById(itemId).orElse(null);

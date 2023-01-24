@@ -23,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -75,7 +77,8 @@ public class ItemService {
         return itemRepository.save(item).getId();
     }
 
-    public void update(Long itemId, PrincipalDetails principalDetails, ItemRequestDto dto) {
+    public void update(Long itemId, PrincipalDetails principalDetails, ItemRequestDto dto,
+                       List<MultipartFile> saveFileList, List<String> removeFileList) {
         Item item = findItem(itemId);
 
         if (!principalDetails.getUser().getEmail().equals(item.getUser().getEmail())) {
@@ -83,6 +86,9 @@ public class ItemService {
         }
 
         item.updateItem(dto);
+
+        if (saveFileList != null) fileSave(item, saveFileList);
+        if (removeFileList != null) fileRemove(removeFileList);
     }
 
     public void delete(Long itemId, PrincipalDetails principalDetails) {
@@ -118,6 +124,12 @@ public class ItemService {
                     .path(imgUploadPath).build();
 
             itemFileRepository.save(itemFile);
+        }
+    }
+
+    private void fileRemove(List<String> fileList) {
+        for (String fileName : fileList) {
+            itemFileRepository.deleteByFileName(URLDecoder.decode(fileName, StandardCharsets.UTF_8));
         }
     }
 

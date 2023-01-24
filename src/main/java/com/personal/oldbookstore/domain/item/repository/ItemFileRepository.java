@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ItemFileRepository extends JpaRepository<ItemFile, Long> {
 
-//    void deleteByFileName(String fileName);
+    void deleteByFileName(String fileName);
 
 }
