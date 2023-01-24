@@ -1,6 +1,7 @@
 package com.personal.oldbookstore.application.controller;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
+import com.personal.oldbookstore.domain.basket.dto.BasketResponseDto;
 import com.personal.oldbookstore.domain.order.dto.OrderListResponseDto;
 import com.personal.oldbookstore.domain.order.dto.OrderRequestDto;
 import com.personal.oldbookstore.domain.order.dto.OrderResponseDto;
@@ -14,6 +15,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
@@ -41,5 +45,17 @@ public class OrderApiController {
     public ResponseEntity<Long> create(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                        @Valid @RequestBody OrderRequestDto dto) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.create(principalDetails, dto));
+    }
+
+    @GetMapping("/load")
+    public List<BasketResponseDto> load(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return orderService.getBasketList(principalDetails.getItemIdList());
+    }
+
+
+    @PostMapping("/add")
+    public void basketToOrder(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                              @RequestBody Map<String, List<Long>> map) {
+        principalDetails.setItemIdList(map.get("itemIds"));
     }
 }
