@@ -12,8 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/items")
@@ -38,9 +40,10 @@ public class ItemApiController {
 
     @PostMapping("")
     public ResponseEntity<Long> create(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                       @Valid @RequestBody ItemRequestDto dto) {
+                                       @Valid @RequestPart(value = "jsonData") ItemRequestDto dto,
+                                       @RequestPart(value = "fileList") List<MultipartFile> fileList) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(itemService.create(principalDetails, dto));
+                .body(itemService.create(principalDetails, dto, fileList));
     }
 
     @PatchMapping("/{itemId}")
