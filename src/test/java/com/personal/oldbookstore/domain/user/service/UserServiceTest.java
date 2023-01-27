@@ -5,7 +5,6 @@ import com.personal.oldbookstore.domain.user.dto.UserRequestDto;
 import com.personal.oldbookstore.domain.user.dto.UserResponseDto;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.domain.user.repository.UserRepository;
-import com.personal.oldbookstore.domain.user.service.UserService;
 import com.personal.oldbookstore.util.exception.CustomException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -109,7 +108,6 @@ public class UserServiceTest {
         UserRequestDto request2 = createUser("test2@abc.com", "test123!!", "test123!!", "tester");
 
         //when
-
         //then
         assertThrows(CustomException.class, () -> {
             userService.join(request2);
