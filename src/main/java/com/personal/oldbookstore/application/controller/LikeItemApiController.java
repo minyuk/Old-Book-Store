@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/likes")
 @RestController
-public class LikeItemController {
+public class LikeItemApiController {
 
     private final LikeItemService likeItemService;
 
@@ -26,7 +26,7 @@ public class LikeItemController {
     @DeleteMapping("/items/{itemId}")
     public void delete(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        likeItemService.delete(principalDetails.getUser(), itemId);
+        likeItemService.delete(principalDetails, itemId);
     }
 
     @PostMapping("/items/{itemId}")

@@ -12,8 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/items")
@@ -38,22 +40,25 @@ public class ItemApiController {
 
     @PostMapping("")
     public ResponseEntity<Long> create(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                                       @Valid @RequestBody ItemRequestDto dto) {
+                                       @Valid @RequestPart(value = "jsonData") ItemRequestDto dto,
+                                       @RequestPart(value = "fileList") List<MultipartFile> fileList) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(itemService.create(principalDetails.getUser(), dto));
+                .body(itemService.create(principalDetails, dto, fileList));
     }
 
-    @PatchMapping("/{itemId}")
+    @PostMapping("/{itemId}")
     public void update(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails,
-                       @Valid @RequestBody ItemRequestDto dto) {
-        itemService.update(itemId,principalDetails.getUser(), dto);
+                       @Valid @RequestPart(value = "jsonData") ItemRequestDto dto,
+                       @RequestPart(value = "saveFileList") List<MultipartFile> saveFileList,
+                       @RequestPart(value = "removeFileList") List<String> removeFileList) {
+        itemService.update(itemId, principalDetails, dto, saveFileList, removeFileList);
     }
 
     @DeleteMapping("/{itemId}")
     public void delete(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        itemService.delete(itemId, principalDetails.getUser());
+        itemService.delete(itemId, principalDetails);
     }
 
 

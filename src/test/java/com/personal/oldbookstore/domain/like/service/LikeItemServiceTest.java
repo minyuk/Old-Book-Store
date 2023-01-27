@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.like.service;
 
+import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
@@ -39,10 +40,12 @@ class LikeItemServiceTest {
     private ItemRepository itemRepository;
 
     private User user;
+    private PrincipalDetails principalDetails;
 
     @BeforeEach
     void createUserWithItem() {
         user = saveUser("test@abc.com", "1234!@", "tester");
+        principalDetails = new PrincipalDetails(user);
     }
 
     @Test
@@ -51,8 +54,8 @@ class LikeItemServiceTest {
         //given
         Item item1 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
         Item item2 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 1, 10000);
-        likeItemService.create(user, item1.getId());
-        likeItemService.create(user, item2.getId());
+        likeItemService.create(principalDetails, item1.getId());
+        likeItemService.create(principalDetails, item2.getId());
 
         Pageable pageable = PageRequest.of(1, 1);
 
@@ -69,8 +72,8 @@ class LikeItemServiceTest {
         //given
         Item item1 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
         Item item2 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 1, 10000);
-        likeItemService.create(user, item1.getId());
-        likeItemService.create(user, item2.getId());
+        likeItemService.create(principalDetails, item1.getId());
+        likeItemService.create(principalDetails, item2.getId());
 
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -82,27 +85,13 @@ class LikeItemServiceTest {
     }
 
     @Test
-    @DisplayName("관심상품 삭제 실패 - 비회원")
-    void deleteOnlyUser() {
-        //given
-        Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-
-        //when
-
-        //then
-        assertThrows(CustomException.class, () -> {
-            likeItemService.delete(null, item.getId());
-        });
-    }
-
-    @Test
     @DisplayName("관심상품 삭제 실패 - 존재하지 않는 상품")
     void deleteNotFound() {
         //given
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            likeItemService.delete(user, 1L);
+            likeItemService.delete(principalDetails, 1L);
         });
     }
 
@@ -111,10 +100,10 @@ class LikeItemServiceTest {
     void deleteDecreaseLikeCount() {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-        likeItemService.create(user, item.getId());
+        likeItemService.create(principalDetails, item.getId());
 
         //when
-        likeItemService.delete(user, item.getId());
+        likeItemService.delete(principalDetails, item.getId());
 
         //then
         Item findItem = itemRepository.findByIdWithFetchJoinUser(item.getId()).orElse(null);
@@ -126,10 +115,10 @@ class LikeItemServiceTest {
     void delete() {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-        likeItemService.create(user, item.getId());
+        likeItemService.create(principalDetails, item.getId());
 
         //when
-        likeItemService.delete(user, item.getId());
+        likeItemService.delete(principalDetails, item.getId());
 
         //then
         assertThat(likeItemRepository.count()).isEqualTo(0);
@@ -155,7 +144,7 @@ class LikeItemServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            likeItemService.create(user, 1L);
+            likeItemService.create(principalDetails, 1L);
         });
     }
 
@@ -166,7 +155,7 @@ class LikeItemServiceTest {
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
 
         //when
-        likeItemService.create(user, item.getId());
+        likeItemService.create(principalDetails, item.getId());
 
         //then
         Item findItem = itemRepository.findByIdWithFetchJoinUser(item.getId()).orElse(null);
@@ -180,7 +169,7 @@ class LikeItemServiceTest {
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
 
         //when
-        Long id = likeItemService.create(user, item.getId());
+        Long id = likeItemService.create(principalDetails, item.getId());
 
         //then
         assertThat(likeItemRepository.count()).isEqualTo(1);

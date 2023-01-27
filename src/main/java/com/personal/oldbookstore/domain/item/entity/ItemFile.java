@@ -17,19 +17,20 @@ public class ItemFile {
     private Long id;
 
     @Column(nullable = false)
-    private String path;
+    private String filePath;
 
     @Column(nullable = false)
-    private String name;
+    private String fileName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
 
     @Builder
-    public ItemFile(Long id, String path, String name) {
+    public ItemFile(Long id, Item item, String path, String name) {
         this.id = id;
-        this.path = path;
-        this.name = name;
+        this.item = item;
+        this.filePath = path;
+        this.fileName = name;
     }
 }
