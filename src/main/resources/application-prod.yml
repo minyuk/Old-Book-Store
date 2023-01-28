@@ -1,5 +1,4 @@
 server:
-  port: 5000
   servlet:
     encoding:
       charset: utf-8
@@ -9,10 +8,10 @@ spring:
     allow-circular-references: true
 
   datasource:
-    url: jdbc:mariadb://${rds.hostname}:${rds.port}/${rds.db.name}
+    url: jdbc:mariadb://oldbook-db.cs6cgjrsdwba.ap-northeast-2.rds.amazonaws.com:3306/oldbook-db
     driver-class-name: org.mariadb.jdbc.Driver
-    username: ${rds.username}
-    password: ${rds.password}
+    username: minyuk
+    password: alsgur4316
 
   jpa:
     open-in-view: true
