@@ -1,5 +1,8 @@
 uploadFile/
-application-oauth.properties
+application-oauth.yml
+application-dev.yml
+application-prod.yml
+
 HELP.md
 .gradle
 build/
