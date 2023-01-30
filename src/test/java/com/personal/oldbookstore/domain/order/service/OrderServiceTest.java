@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -116,7 +117,6 @@ public class OrderServiceTest {
         orderService.cancel(orderId);
 
         //then
-        assertThat(orderRepository.count()).isEqualTo(1);
         Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CANCEL);
     }
@@ -155,7 +155,8 @@ public class OrderServiceTest {
         orderService.create(principalDetails, request);
 
         //then
-        assertThat(basketRepository.count()).isEqualTo(0);
+        assertThat(basketRepository.findByUserIdAndItemId(principalDetails.getUser().getId(), item1.getId()).orElse(null)).isNull();
+        assertThat(basketRepository.findByUserIdAndItemId(principalDetails.getUser().getId(), item2.getId()).orElse(null)).isNull();
     }
 
     @Test
@@ -241,11 +242,10 @@ public class OrderServiceTest {
         Long orderId = orderService.create(principalDetails, request);
 
         //then
-        assertThat(orderItemRepository.count()).isEqualTo(2);
-        assertThat(orderRepository.count()).isEqualTo(1);
-
         Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
         assertThat(order.getRecipient()).isEqualTo("tester");
+        assertThat(order.getOrderItems().get(0).getItem().getId()).isEqualTo(item1.getId());
+        assertThat(order.getOrderItems().get(1).getItem().getId()).isEqualTo(item2.getId());
     }
 
     @Test
@@ -261,11 +261,9 @@ public class OrderServiceTest {
         Long orderId = orderService.create(principalDetails, request);
 
         //then
-        assertThat(orderItemRepository.count()).isEqualTo(1);
-        assertThat(orderRepository.count()).isEqualTo(1);
-
         Order order = orderRepository.findByIdWithFetchJoinOrderItem(orderId).orElse(null);
         assertThat(order.getRecipient()).isEqualTo("tester");
+        assertThat(order.getOrderItems().get(0).getItem().getId()).isEqualTo(item1.getId());
     }
 
     @Test

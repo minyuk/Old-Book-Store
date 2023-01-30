@@ -115,13 +115,13 @@ class LikeItemServiceTest {
     void delete() {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-        likeItemService.create(principalDetails, item.getId());
+        Long id = likeItemService.create(principalDetails, item.getId());
 
         //when
         likeItemService.delete(principalDetails, item.getId());
 
         //then
-        assertThat(likeItemRepository.count()).isEqualTo(0);
+        assertThat(likeItemRepository.findById(id).orElse(null)).isNull();
     }
 
     @Test
@@ -172,8 +172,6 @@ class LikeItemServiceTest {
         Long id = likeItemService.create(principalDetails, item.getId());
 
         //then
-        assertThat(likeItemRepository.count()).isEqualTo(1);
-
         LikeItem likeItem = likeItemRepository.findByIdWithFetchJoinItem(id).orElse(null);
         assertThat(likeItem.getItem().getStock()).isEqualTo(100);
     }

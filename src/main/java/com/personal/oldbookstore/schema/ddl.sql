@@ -120,3 +120,16 @@ CREATE TABLE SPRING_SESSION_ATTRIBUTES (
     CONSTRAINT SPRING_SESSION_ATTRIBUTES_PK PRIMARY KEY (SESSION_PRIMARY_ID, ATTRIBUTE_NAME),
     CONSTRAINT SPRING_SESSION_ATTRIBUTES_FK FOREIGN KEY (SESSION_PRIMARY_ID) REFERENCES SPRING_SESSION(PRIMARY_ID) ON DELETE CASCADE
 ) ENGINE=InnoDB ROW_FORMAT=DYNAMIC;
+
+drop table Basket;
+drop table Comment;
+drop table Item;
+drop table ItemFile;
+drop table LikeItem;
+drop table OrderItem;
+drop table Orders;
+drop table User;
+
+show tables;
+
+select * from Item;

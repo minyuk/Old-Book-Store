@@ -98,13 +98,13 @@ class BasketServiceTest {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
         BasketRequestDto createDto = new BasketRequestDto(1);
-        basketService.create(principalDetails, item.getId(), createDto);
+        Long basketId = basketService.create(principalDetails, item.getId(), createDto);
 
         //when
         basketService.delete(user, item.getId());
 
         //then
-        assertThat(basketRepository.count()).isEqualTo(0);
+        assertThat(basketRepository.findById(basketId).orElse(null)).isNull();
     }
 
     @Test
@@ -195,8 +195,6 @@ class BasketServiceTest {
         basketService.create(principalDetails, item.getId(), dto);
 
         //then
-        assertThat(basketRepository.count()).isEqualTo(1);
-
         Basket basket = basketRepository.findByUserIdAndItemId(user.getId(), item.getId()).orElse(null);
         assertThat(basket.getItem().getBookTitle()).isEqualTo("Java의 정석");
     }

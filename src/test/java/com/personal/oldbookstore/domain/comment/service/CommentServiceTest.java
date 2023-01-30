@@ -158,7 +158,7 @@ class CommentServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () ->
-                commentService.delete(principalDetails, 1L)
+                commentService.delete(principalDetails, 0L)
         );
     }
 
@@ -204,7 +204,7 @@ class CommentServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () ->
-                commentService.update(principalDetails, 1L, updateRequest)
+                commentService.update(principalDetails, 0L, updateRequest)
         );
     }
 
@@ -261,7 +261,6 @@ class CommentServiceTest {
         CommentResponseDto response = commentService.create(principalDetails, item.getId(), request);
 
         //then
-        assertThat(commentRepository.count()).isEqualTo(1);
         assertThat(response.contents()).isEqualTo("책 상태가 궁금합니다.");
     }
 
