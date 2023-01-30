@@ -4,6 +4,4 @@ spring:
       - prod
     include:
       - oauth
-
-file:
-  dir: /Users/kangminhyeok/Desktop/project/book/src/old-book-store/src/main/resources/static/uploadFile
+      - real-db

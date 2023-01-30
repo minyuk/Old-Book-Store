@@ -27,6 +27,9 @@ spring:
     ansi:
       enabled: always
 
+file:
+  dir: /Users/kangminhyeok/Desktop/project/book/src/old-book-store/src/main/resources/static/uploadFile
+
 #logging:
 #  level:
 #    '[org.springframework.web]': DEBUG

@@ -7,19 +7,19 @@ spring:
   main:
     allow-circular-references: true
 
-  datasource:
-    url: jdbc:mariadb://oldbook-db.cs6cgjrsdwba.ap-northeast-2.rds.amazonaws.com:3306/oldbook-db
-    driver-class-name: org.mariadb.jdbc.Driver
-    username: minyuk
-    password: alsgur4316
-
   jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: true
     hibernate:
-      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+  session:
+    store-type: jdbc
 
 logging:
   level:
     '[org.springframework.boot.web]': INFO
+
+file:
+  dir: /Users/kangminhyeok/Desktop/project/book/src/old-book-store/src/main/resources/static/uploadFile
