@@ -4,4 +4,3 @@ spring:
       - prod
     include:
       - oauth
-      - real-db
