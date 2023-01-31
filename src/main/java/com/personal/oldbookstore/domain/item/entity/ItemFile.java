@@ -1,5 +1,6 @@
 package com.personal.oldbookstore.domain.item.entity;
 
+import com.personal.oldbookstore.domain.item.dto.ItemFileResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,5 +33,11 @@ public class ItemFile {
         this.item = item;
         this.filePath = path;
         this.fileName = name;
+    }
+
+    public ItemFileResponseDto toDto() {
+        return ItemFileResponseDto.builder()
+                .fileName(fileName)
+                .build();
     }
 }

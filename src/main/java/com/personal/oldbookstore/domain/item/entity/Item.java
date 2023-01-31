@@ -140,8 +140,10 @@ public class Item extends BaseTimeEntity {
                 .stock(stock)
                 .price(price)
                 .viewCount(viewCount)
+                .likeCount(likeCount)
                 .saleStatus(getSaleStatus().getValue())
                 .createdDate(getModifiedDate())
+                .files(files.stream().map(ItemFile::toDto).toList())
                 .build();
     }
 
