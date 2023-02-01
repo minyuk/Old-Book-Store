@@ -4,6 +4,7 @@ import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
+import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.entity.ItemFile;
 import com.personal.oldbookstore.domain.item.repository.ItemFileRepository;
@@ -27,8 +28,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,23 +42,6 @@ public class ItemService {
 
     @Value("${file.dir}")
     private String imgUploadPath;
-
-    public Page<ItemListResponseDto> getList(Pageable pageable, String category, String keyword) {
-        return itemRepository.findAllBySearchOption(pageable, category, keyword).map(Item::toDtoList);
-    }
-
-    public ItemResponseDto get(PrincipalDetails principalDetails, Long itemId) {
-        Item item = findItem(itemId);
-
-        item.incrementViewCount();
-
-        ItemResponseDto itemResponseDto = item.toDto();
-        if (principalDetails != null) {
-            itemResponseDto.setLikeStatus(likeItemRepository.findByUserIdAndItemId(principalDetails.getUser().getId(), itemId).isPresent());
-        }
-
-        return itemResponseDto;
-    }
 
     public Long create(PrincipalDetails principalDetails, ItemRequestDto dto, List<MultipartFile> fileList) {
         Item item = Item.builder()
@@ -103,6 +86,35 @@ public class ItemService {
         }
 
         itemRepository.delete(item);
+    }
+
+    public Map<String, Object> getList(Pageable pageable, String category, String keyword) {
+        Page<ItemListResponseDto> Items = itemRepository.findAllBySearchOption(pageable, category, keyword).map(Item::toDtoList);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("pagination", Items);
+
+        if(category == null) {
+            category = "통합검색";
+        } else {
+            category = Category.valueOf(category).getValue();
+        };
+        map.put("category", category);
+
+        return map;
+    }
+
+    public ItemResponseDto get(PrincipalDetails principalDetails, Long itemId) {
+        Item item = findItem(itemId);
+
+        item.incrementViewCount();
+
+        ItemResponseDto itemResponseDto = item.toDto();
+        if (principalDetails != null) {
+            itemResponseDto.setLikeStatus(likeItemRepository.findByUserIdAndItemId(principalDetails.getUser().getId(), itemId).isPresent());
+        }
+
+        return itemResponseDto;
     }
 
     private void fileSave(Item item, List<MultipartFile> fileList) {

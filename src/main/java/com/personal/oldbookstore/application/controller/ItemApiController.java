@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/items")
@@ -23,20 +24,6 @@ import java.util.List;
 public class ItemApiController {
 
     private final ItemService itemService;
-
-    @GetMapping("")
-    public Page<ItemListResponseDto> getList(Pageable pageable,
-                                             @RequestParam(required = false) String category,
-                                             @RequestParam(required = false) String keyword) {
-        return itemService.getList(pageable, category, keyword);
-    }
-
-    @GetMapping("/{itemId}")
-    public ResponseEntity<ItemResponseDto> get(@PathVariable Long itemId,
-                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(itemService.get(principalDetails, itemId));
-    }
 
     @PostMapping("")
     public ResponseEntity<Long> create(@AuthenticationPrincipal PrincipalDetails principalDetails,
@@ -61,5 +48,17 @@ public class ItemApiController {
         itemService.delete(itemId, principalDetails);
     }
 
+    @GetMapping("/{itemId}")
+    public ResponseEntity<ItemResponseDto> get(@PathVariable Long itemId,
+                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(itemService.get(principalDetails, itemId));
+    }
 
+    @GetMapping("")
+    public Map<String, Object> getList(Pageable pageable,
+                       @RequestParam(required = false) String category,
+                       @RequestParam(required = false) String keyword) {
+        return itemService.getList(pageable, category, keyword);
+    }
 }
