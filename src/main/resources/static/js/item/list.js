@@ -1,3 +1,4 @@
+const baseUrl = window.location.pathname;   //posts    //posts/novel
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(location.search);
 
@@ -12,33 +13,32 @@ $("#name, #seller, #saleStatus, #createdDate, #viewCount").on("click", function(
 
 function loadList(e_id, e_class){
     if(e_id != null){
-        urlParams.set("sort", e_id+","+e_class);
+        if(e_id != null){
+            urlParams.set("sort", e_id+","+e_class);
+        }
     }
 
     $.ajax({
-        url: "/api/items?" + urlParams,
+        url: "/api/items" + queryString + urlParams,
         type: "get",
         success: function(data){
             $(".head .categoryName").text(data.category);
 
-//            if(urlParams.get("search") != null){
-//                replaceSearch();
-//            }
+            if(urlParams.get("keyword") != null){
+                replaceSearch();
+            }
 
             $("table tbody *").replaceWith();
             $(".pagination *").replaceWith();
 
-            $("table tbody").append(addTR(data.content));
-            $(".pagination").append(addPagination(data));
+            $("table tbody").append(addTR(data.pagination.content));
+            $(".pagination").append(addPagination(data.pagination));
         },
         error: function(error){
             alert(error.responseText);
         }
     });
-
 }
-
-
 
 function addTR(posts){
     var result = "";
@@ -63,36 +63,25 @@ function addTR(posts){
 
 
 function replaceSearch(){
-    let search = urlParams.get("search").split(",");
-    let searchType = search[0];
-    let searchValue = search[1];
+    let search = urlParams.get("keyword");
+    let searchValue = search;
 
-    document.querySelectorAll("#search option").forEach(function(option){
-        if(option.value == searchType){
-            option.selected = true;
-        }
-    });
     document.querySelector("#searchValue").value = searchValue;
 }
-
-
-
-
 
 
 function searchFormSubmit(){
     event.preventDefault(); //submit시 queryString이 모두 사라지게되는 것 방지
     //https://ejolie.dev/posts/form-submission-algorithm 참고
 
-    let option = document.querySelector("#search > option:checked").value;
     let value = document.querySelector("#searchValue").value;
 
     let url = new URLSearchParams(location.search);
-    url.set("search", option+","+value);
+    url.set("keyword", value);
     url.set("page", 1);
 
     if(value == null || value == ""){
-        url.delete("search");
+        url.delete("keyword");
     }
 
     window.location.href = baseUrl + "?" + url;

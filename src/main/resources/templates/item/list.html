@@ -31,13 +31,7 @@
         <h3 class="text-wrap categoryName">통합검색</h3>
         <form id="searchForm" name="searchForm" method="get">
             <div class="input-group">
-                <select id="search" name="search" class="form-select" >
-                    <option value="1">제목</option>
-                    <option value="2">작성자</option>
-                    <option value="3">내용</option>
-                    <option value="4">제목+내용</option>
-                </select>
-                <input type="text" class="form-control" id="searchValue">
+                <input type="text" class="form-control" id="searchValue" placeholder="상품명 또는 도서명으로 검색해주세요.">
                 <button class="form-control" type="button" onclick="searchFormSubmit()"><i class="fas fa-search"></i></button>
             </div>
         </form>
@@ -58,10 +52,10 @@
         <tr>
             <th scope="col" >번호</th>
             <th scope="col">카테고리</th>
-            <th scope="col" id="title" class="desc">제목<span>↓</span></th>
+            <th scope="col" id="name" class="desc">상품명<span>↓</span></th>
             <th scope="col" id="saleStatus" class="desc">판매상태<span>↓</span></th>
             <th scope="col" id="seller" class="desc">작성자<span>↓</span></th>
-            <th scope="col" id="createTime" class="desc">날짜<span>↓</span></th>
+            <th scope="col" id="createdDate" class="desc">날짜<span>↓</span></th>
             <th scope="col" id="viewCount" class="desc">조회<span>↓</span></th>
         </tr>
         </thead>
