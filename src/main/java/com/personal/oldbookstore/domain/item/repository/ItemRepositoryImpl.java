@@ -2,12 +2,15 @@ package com.personal.oldbookstore.domain.item.repository;
 
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +31,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
                 .fetchJoin()
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(item.id.desc())
+                .orderBy(sort(pageable))
                 .fetch();
 
         Long total = queryFactory.select(item.count())
@@ -60,5 +63,31 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
     private BooleanExpression eqCategory(String category) {
         if (category == null || category.isEmpty()) return null;
         return item.category.eq(Category.valueOf(category));
+    }
+
+    private OrderSpecifier<?> sort(Pageable pageable){
+        if(pageable.getSort().isEmpty()){
+            return new OrderSpecifier<>(Order.DESC, item.id);
+        }
+
+        Sort sort = pageable.getSort();
+        String field = "";
+        Order direction = null;
+
+        //sort가 여러개일 경우
+        for (Sort.Order order : sort) {
+            field = order.getProperty();
+            direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
+
+            switch (field){
+                case "name" : return new OrderSpecifier(direction, item.name);
+                case "saleStatus" : return new OrderSpecifier(direction, item.saleStatus);
+                case "seller" : return new OrderSpecifier(direction, item.user);
+                case "createdDate" : return new OrderSpecifier(direction, item.createdDate);
+                case "viewCount" : return new OrderSpecifier(direction, item.viewCount);
+            }
+        }
+
+        return null;
     }
 }

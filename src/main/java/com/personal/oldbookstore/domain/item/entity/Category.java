@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Category {
-    NOBEL("소설"),
+    NOVEL("소설"),
     DEVELOPMENT("자기계발"),
     IT("IT"),
     CARTOON("만화"),

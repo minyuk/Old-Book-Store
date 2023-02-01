@@ -27,11 +27,11 @@ public class ItemController {
         if(category == null){
             category = "";
         }else{
-            category = "/" + category;
+            category = "&category=" + category;
         }
 
         if(page == null){
-            return "redirect:/item/list"+category+"?page=1";
+            return "redirect:/item/list?page=1" + category;
         }
 
         return "item/list";
