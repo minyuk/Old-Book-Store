@@ -51,6 +51,8 @@ public class CommentService {
                 .parentId(dto.parentId())
                 .build();
 
+        item.incrementCommentCount();
+
         return commentRepository.save(comment).toDto();
     }
 

@@ -58,6 +58,8 @@ public class Item extends BaseTimeEntity {
 
     private Long likeCount;
 
+    private Long commentCount;
+
     @Enumerated(EnumType.STRING)
     private SaleStatus saleStatus;
 
@@ -78,7 +80,8 @@ public class Item extends BaseTimeEntity {
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Item(User user, String name, Category category, String bookTitle, String bookAuthor, String contents, Integer stock, Integer price, Long viewCount, Long likeCount, SaleStatus saleStatus) {
+    public Item(User user, String name, Category category, String bookTitle, String bookAuthor, String contents,
+                Integer stock, Integer price, Long viewCount, Long likeCount, Long commentCount, SaleStatus saleStatus) {
         this.user = user;
         this.name = name;
         this.category = category;
@@ -89,6 +92,7 @@ public class Item extends BaseTimeEntity {
         this.price = price;
         this.viewCount = viewCount == null ? 0 : viewCount;
         this.likeCount = likeCount == null ? 0 : likeCount;
+        this.commentCount = commentCount == null ? 0 : commentCount;
         this.saleStatus = saleStatus == null ? SaleStatus.SALE : saleStatus;
     }
 
@@ -112,6 +116,10 @@ public class Item extends BaseTimeEntity {
     public void incrementLikeCount() { likeCount++; }
 
     public void decreaseLikeCount() { likeCount--; }
+
+    public void incrementCommentCount() {
+        commentCount++;
+    }
 
     public void updateSaleStatus() {
         if (stock > 0) saleStatus = SaleStatus.SALE;
@@ -154,6 +162,7 @@ public class Item extends BaseTimeEntity {
                 .name(name)
                 .category(getCategory().getValue())
                 .viewCount(viewCount)
+                .commentCount(commentCount)
                 .saleStatus(getSaleStatus().getValue())
                 .createdDate(getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))
                 .build();
