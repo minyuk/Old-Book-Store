@@ -26,8 +26,8 @@ public class ItemApiController {
 
     @GetMapping("")
     public Page<ItemListResponseDto> getList(Pageable pageable,
-                                             @RequestParam String category,
-                                             @RequestParam String keyword) {
+                                             @RequestParam(required = false) String category,
+                                             @RequestParam(required = false) String keyword) {
         return itemService.getList(pageable, category, keyword);
     }
 
