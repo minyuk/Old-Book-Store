@@ -22,7 +22,6 @@ function loadPost(){
     });
 }
 
-
 function replacePost(post){
     document.querySelector("#name").innerHTML = post.name;
     document.querySelector("#seller").innerHTML = post.seller;
@@ -40,7 +39,7 @@ function replacePost(post){
         document.querySelector("#likeButton").classList.add("clicked");
         document.querySelector("#likeButton").setAttribute("onClick", "dislike()");
     }
-    if(post.memberIsSeller == true){
+    if(post.isSeller == true){
         document.querySelector("#postMenu")
         .innerHTML = `
             <a href="/item/edit/${id}">수정</a>
@@ -54,7 +53,6 @@ function replacePost(post){
     files.init(post.files);
 }
 
-
 function deletePost(){
 
     var question = confirm("게시글을 삭제하시겠습니까?");
@@ -67,18 +65,15 @@ function deletePost(){
         type: "delete",
         success: function(data){
             alert("게시글이 삭제되었습니다");
-            window.location.replace("/items");
+            window.location.replace("/item/list");
         },
         error: function(error){
             alert(error.responseText);
-            window.location.replace("/items");
+            window.location.replace("/item/list");
         }
     });
 
 }
-
-
-
 
 function like(){
     var button = document.querySelector("#likeButton");

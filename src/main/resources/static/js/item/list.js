@@ -19,10 +19,10 @@ function loadList(e_id, e_class){
     }
 
     $.ajax({
-        url: "/api/items" + queryString + urlParams,
+        url: "/api/items?"+ urlParams,
         type: "get",
         success: function(data){
-            $(".head .categoryName").text(data.category);
+//            $(".head .categoryName").text(data.category);
 
             if(urlParams.get("keyword") != null){
                 replaceSearch();
