@@ -91,7 +91,7 @@ class LikeItemServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            likeItemService.delete(principalDetails, 1L);
+            likeItemService.delete(principalDetails, 0L);
         });
     }
 
@@ -144,7 +144,7 @@ class LikeItemServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            likeItemService.create(principalDetails, 1L);
+            likeItemService.create(principalDetails, 0L);
         });
     }
 

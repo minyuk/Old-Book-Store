@@ -180,7 +180,7 @@ class BasketServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            basketService.create(principalDetails, 1L, dto);
+            basketService.create(principalDetails, 0L, dto);
         });
     }
 
