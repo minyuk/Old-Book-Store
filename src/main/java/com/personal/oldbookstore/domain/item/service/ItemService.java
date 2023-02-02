@@ -4,6 +4,7 @@ import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
+import com.personal.oldbookstore.domain.item.dto.ItemUpdateRequestDto;
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.entity.ItemFile;
@@ -60,7 +61,7 @@ public class ItemService {
         return itemRepository.save(item).getId();
     }
 
-    public void update(Long itemId, PrincipalDetails principalDetails, ItemRequestDto dto,
+    public void update(Long itemId, PrincipalDetails principalDetails, ItemUpdateRequestDto dto,
                        List<MultipartFile> saveFileList, List<String> removeFileList) {
         Item item = findItem(itemId);
 

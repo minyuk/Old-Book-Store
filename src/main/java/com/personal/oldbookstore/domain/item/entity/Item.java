@@ -6,6 +6,7 @@ import com.personal.oldbookstore.domain.comment.entity.Comment;
 import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
+import com.personal.oldbookstore.domain.item.dto.ItemUpdateRequestDto;
 import com.personal.oldbookstore.domain.like.entity.LikeItem;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.util.exception.CustomException;
@@ -126,7 +127,7 @@ public class Item extends BaseTimeEntity {
         else saleStatus = SaleStatus.SOLD_OUT;
     }
 
-    public void updateItem(ItemRequestDto dto) {
+    public void updateItem(ItemUpdateRequestDto dto) {
         this.name = dto.name();
         this.category = dto.category();
         this.bookTitle = dto.bookTitle();
@@ -134,6 +135,7 @@ public class Item extends BaseTimeEntity {
         this.contents = dto.contents();
         this.stock = dto.stock();
         this.price = dto.price();
+        this.saleStatus = dto.saleStatus();
     }
 
     public ItemResponseDto toDto() {

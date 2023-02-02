@@ -1,12 +1,11 @@
 package com.personal.oldbookstore.application.controller;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
-import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
+import com.personal.oldbookstore.domain.item.dto.ItemUpdateRequestDto;
 import com.personal.oldbookstore.domain.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +35,9 @@ public class ItemApiController {
     @PostMapping("/{itemId}")
     public void update(@PathVariable Long itemId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails,
-                       @Valid @RequestPart(value = "jsonData") ItemRequestDto dto,
-                       @RequestPart(value = "saveFileList") List<MultipartFile> saveFileList,
-                       @RequestPart(value = "removeFileList") List<String> removeFileList) {
+                       @Valid @RequestPart(value = "jsonData") ItemUpdateRequestDto dto,
+                       @RequestPart(value = "saveFileList", required = false) List<MultipartFile> saveFileList,
+                       @RequestPart(value = "removeFileList", required = false) List<String> removeFileList) {
         itemService.update(itemId, principalDetails, dto, saveFileList, removeFileList);
     }
 

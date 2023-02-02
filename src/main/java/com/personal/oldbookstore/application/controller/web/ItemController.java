@@ -15,6 +15,11 @@ public class ItemController {
         return "item/write";
     }
 
+    @GetMapping("/edit/{itemId}")
+    public String edit(@PathVariable Long itemId) {
+        return "item/edit";
+    }
+
     @GetMapping("/{itemId}")
     public String detail(@PathVariable Long itemId){
         return "item/detail";
