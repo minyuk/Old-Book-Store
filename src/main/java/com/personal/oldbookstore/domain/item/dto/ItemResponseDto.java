@@ -27,6 +27,8 @@ public class ItemResponseDto{
     private List<ItemFileResponseDto> files;
     private Boolean likeStatus = false;
 
+    private Boolean isSeller = false;
+
     @Builder
     public ItemResponseDto(Long id, String seller, String name, String category, String bookTitle, String bookAuthor, String contents,
                            Integer stock, Integer price, Long likeCount, Long viewCount, String saleStatus, LocalDateTime createdDate, List<ItemFileResponseDto> files) {
@@ -48,5 +50,9 @@ public class ItemResponseDto{
 
     public void setLikeStatus(Boolean status) {
         this.likeStatus = status;
+    }
+
+    public void isSeller() {
+        this.isSeller = true;
     }
 }

@@ -88,6 +88,27 @@ public class ItemService {
         itemRepository.delete(item);
     }
 
+    public ItemResponseDto get(PrincipalDetails principalDetails, Long itemId) {
+        Item item = findItem(itemId);
+
+        item.incrementViewCount();
+
+        ItemResponseDto itemResponseDto = item.toDto();
+        if (principalDetails != null) {
+
+            if (item.getUser().getEmail().equals(principalDetails.getUser().getEmail())) {
+                itemResponseDto.isSeller();
+            }
+
+            itemResponseDto.setLikeStatus(
+                    likeItemRepository.findByUserIdAndItemId(principalDetails.getUser().getId(), itemId).isPresent()
+            );
+
+        }
+
+        return itemResponseDto;
+    }
+
     public Map<String, Object> getList(Pageable pageable, String category, String keyword) {
         Page<ItemListResponseDto> Items = itemRepository.findAllBySearchOption(pageable, category, keyword).map(Item::toDtoList);
 
@@ -102,19 +123,6 @@ public class ItemService {
         map.put("category", category);
 
         return map;
-    }
-
-    public ItemResponseDto get(PrincipalDetails principalDetails, Long itemId) {
-        Item item = findItem(itemId);
-
-        item.incrementViewCount();
-
-        ItemResponseDto itemResponseDto = item.toDto();
-        if (principalDetails != null) {
-            itemResponseDto.setLikeStatus(likeItemRepository.findByUserIdAndItemId(principalDetails.getUser().getId(), itemId).isPresent());
-        }
-
-        return itemResponseDto;
     }
 
     private void fileSave(Item item, List<MultipartFile> fileList) {
