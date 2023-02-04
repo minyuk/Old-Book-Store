@@ -111,10 +111,10 @@ public class ItemService {
     }
 
     public Map<String, Object> getList(Pageable pageable, String category, String keyword) {
-        Page<ItemListResponseDto> Items = itemRepository.findAllBySearchOption(pageable, category, keyword).map(Item::toDtoList);
+        Page<ItemListResponseDto> items = itemRepository.findAllBySearchOption(pageable, category, keyword).map(Item::toDtoList);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("pagination", Items);
+        map.put("pagination", items);
 
         if(category == null) {
             category = "통합검색";
@@ -124,6 +124,14 @@ public class ItemService {
         map.put("category", category);
 
         return map;
+    }
+
+    public Page<ItemListResponseDto> getMyList(PrincipalDetails principalDetails, Pageable pageable) {
+        if (principalDetails == null) {
+            throw new CustomException(ErrorCode.ONLY_USER);
+        }
+
+        return itemRepository.findAllByUserId(principalDetails.getUser().getId(), pageable).map(Item::toDtoList);
     }
 
     private void fileSave(Item item, List<MultipartFile> fileList) {

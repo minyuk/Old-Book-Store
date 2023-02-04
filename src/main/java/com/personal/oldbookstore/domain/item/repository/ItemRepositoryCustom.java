@@ -9,6 +9,9 @@ import java.util.Optional;
 public interface ItemRepositoryCustom {
 
     Page<Item> findAllBySearchOption(Pageable pageable, String category, String keyword);
+
     Optional<Item> findByIdWithFetchJoinUser(Long id);
+
+    Page<Item> findAllByUserId(Long userId, Pageable pageable);
 
 }

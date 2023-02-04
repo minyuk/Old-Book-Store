@@ -1,11 +1,13 @@
 package com.personal.oldbookstore.application.controller;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
+import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemUpdateRequestDto;
 import com.personal.oldbookstore.domain.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,5 +61,11 @@ public class ItemApiController {
                        @RequestParam(required = false) String category,
                        @RequestParam(required = false) String keyword) {
         return itemService.getList(pageable, category, keyword);
+    }
+
+    @GetMapping("/my")
+    public Page<ItemListResponseDto> getMyList(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                               Pageable pageable) {
+        return itemService.getMyList(principalDetails, pageable);
     }
 }

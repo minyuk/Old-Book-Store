@@ -43,6 +43,23 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
     }
 
     @Override
+    public Page<Item> findAllByUserId(Long userId, Pageable pageable) {
+        List<Item> items = queryFactory.selectFrom(item)
+                .where(item.user.id.eq(userId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(sort(pageable))
+                .fetch();
+
+        Long total = queryFactory.select(item.count())
+                .from(item)
+                .fetchOne();
+
+        return new PageImpl<>(items, pageable, total);
+
+    }
+
+    @Override
     public Optional<Item> findByIdWithFetchJoinUser(Long id) {
         Item findItem = queryFactory.selectFrom(item)
                 .join(item.user, user)
