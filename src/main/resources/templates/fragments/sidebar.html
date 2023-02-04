@@ -19,12 +19,18 @@
             <li>
                 <a href="#" class="nav-link"
                    th:href="@{/my/items(page=1)}" th:classappend="${menu} == 'myItems' ? 'active'">
-                    <i class="fas fa-file-alt"></i> 내 게시글
+                    <i class="fas fa-file-alt"></i> 판매내역
                 </a>
             </li>
             <li>
                 <a href="#" class="nav-link"
-                   th:href="@{/dashboard/myComments(page=1)}" th:classappend="${menu} == 'myComments' ? 'active'">
+                   th:href="@{/dashboard/myOrders(page=1)}" th:classappend="${menu} == 'myOrders' ? 'active'">
+                    <i class="fas fa-wallet"></i> 구매내역
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link"
+                   th:href="@{/my/comments(page=1)}" th:classappend="${menu} == 'myComments' ? 'active'">
                     <i class="fas fa-comment"></i> 내 댓글
                 </a>
             </li>
@@ -39,12 +45,7 @@
                     <i class="fas fa-shopping-basket"></i> 장바구니
                 </a>
             </li>
-            <li>
-                <a href="#" class="nav-link"
-                   th:href="@{/dashboard/myOrders(page=1)}" th:classappend="${menu} == 'myOrders' ? 'active'">
-                    <i class="fas fa-wallet"></i> 구매목록
-                </a>
-            </li>
+
         </ul>
     </div>
 
