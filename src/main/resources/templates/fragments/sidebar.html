@@ -12,7 +12,7 @@
         <ul class="nav nav-pills ms-2 mt-2 me-2">
             <li>
                 <a href="#" class="nav-link"
-                   th:href="@{/dashboard/myInfo}" th:classappend="${menu} == 'myInfo' ? 'active'">
+                   th:href="@{/my/info}" th:classappend="${menu} == 'myInfo' ? 'active'">
                     <i class="fas fa-user-circle"></i> 내 정보
                 </a>
             </li>
@@ -43,12 +43,6 @@
                 <a href="#" class="nav-link"
                    th:href="@{/dashboard/myOrders(page=1)}" th:classappend="${menu} == 'myOrders' ? 'active'">
                     <i class="fas fa-wallet"></i> 구매목록
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link"
-                   th:href="@{/dashboard/myChat}" th:classappend="${menu} == 'myChat' ? 'active'">
-                    <i class="fas fa-comments"></i> 채팅목록
                 </a>
             </li>
         </ul>
