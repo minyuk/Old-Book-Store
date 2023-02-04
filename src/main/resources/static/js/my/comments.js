@@ -6,7 +6,7 @@ $(document).ready(function(){
     loadList(null, null);
 });
 
-$("#name, #saleStatus, #createdDate, #viewCount").on("click", function(){
+$("#name, #saleStatus, #createdDate, #contents").on("click", function(){
     changeClass(this.id, this.className);
     loadList(this.id, this.className);
 });
