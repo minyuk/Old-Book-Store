@@ -41,6 +41,8 @@ public class LikeItem extends BaseTimeEntity {
                 .name(item.getName())
                 .bookTitle(item.getBookTitle())
                 .price(item.getPrice())
+                .saleStatus(item.getSaleStatus().getValue())
+                .category(item.getCategory().getValue())
                 .build();
     }
 }
