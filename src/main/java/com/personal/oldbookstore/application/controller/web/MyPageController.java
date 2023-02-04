@@ -15,4 +15,9 @@ public class MyPageController {
     public String myItems() {
         return "my/items";
     }
+
+    @GetMapping("/my/comments")
+    public String myComments() {
+        return "my/comments";
+    }
 }
