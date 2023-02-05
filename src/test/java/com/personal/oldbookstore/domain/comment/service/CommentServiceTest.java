@@ -234,7 +234,7 @@ class CommentServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            commentService.create(principalDetails, 10L, request);
+            commentService.create(principalDetails, 0L, request);
         });
     }
 
