@@ -37,7 +37,7 @@ public class BasketApiController {
         basketService.update(principalDetails, itemId, count);
     }
 
-    @PostMapping("/items/{itemId}/count")
+    @PostMapping("/items/{itemId}/{count}")
     public ResponseEntity<Long> create(@PathVariable Long itemId,
                                        @PathVariable Integer count,
                                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
