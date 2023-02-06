@@ -10,4 +10,11 @@ public class OrderController {
     public String basket() {
         return "order/basket";
     }
+
+    @GetMapping("/order")
+    public String order() {
+        return "order/order";
+    }
+
+
 }

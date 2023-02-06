@@ -13,7 +13,7 @@ function loadPost(){
         type: "get",
         success: function(data){
             replacePost(data);
-//            replaceBasket(data);
+            replaceBasket(data);
         },
         error: function(error){
             alert(error.responseJSON.message);
