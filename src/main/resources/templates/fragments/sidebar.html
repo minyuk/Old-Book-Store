@@ -24,7 +24,7 @@
             </li>
             <li>
                 <a href="#" class="nav-link"
-                   th:href="@{/dashboard/myOrders(page=1)}" th:classappend="${menu} == 'myOrders' ? 'active'">
+                   th:href="@{/my/orders(page=1)}" th:classappend="${menu} == 'myOrders' ? 'active'">
                     <i class="fas fa-wallet"></i> 구매내역
                 </a>
             </li>
@@ -55,25 +55,25 @@
         <ul class="nav nav-pills text-center">
             <li>
                 <a href="#" class="nav-link py-3 border"
-                   th:href="@{/dashboard/myInfo}" th:classappend="${menu} == 'myInfo' ? 'active'">
+                   th:href="@{/my/info}" th:classappend="${menu} == 'myInfo' ? 'active'">
                     <i class="fas fa-user-circle"></i>
                 </a>
             </li>
             <li>
                 <a href="#" class="nav-link py-3 border"
-                   th:href="@{/dashboard/myItems(page=1)}" th:classappend="${menu} == 'myItems' ? 'active'">
+                   th:href="@{/my/items(page=1)}" th:classappend="${menu} == 'myItems' ? 'active'">
                     <i class="fas fa-file-alt"></i>
                 </a>
             </li>
             <li>
                 <a href="#" class="nav-link py-3 border"
-                   th:href="@{/dashboard/myComments(page=1)}" th:classappend="${menu} == 'myComments' ? 'active'">
+                   th:href="@{/my/comments(page=1)}" th:classappend="${menu} == 'myComments' ? 'active'">
                     <i class="fas fa-comment"></i>
                 </a>
             </li>
             <li>
                 <a href="#" class="nav-link py-3 border"
-                   th:href="@{/dashboard/myFavorites(page=1)}" th:classappend="${menu} == 'myFavorites' ? 'active'">
+                   th:href="@{/my/favorites(page=1)}" th:classappend="${menu} == 'myFavorites' ? 'active'">
                     <i class="fas fa-heart"></i>
                 </a>
             </li>
@@ -85,14 +85,8 @@
             </li>
             <li>
                 <a href="#" class="nav-link py-3 border"
-                   th:href="@{/dashboard/myOrders(page=1)}" th:classappend="${menu} == 'myOrders' ? 'active'">
+                   th:href="@{/my/orders(page=1)}" th:classappend="${menu} == 'myOrders' ? 'active'">
                     <i class="fas fa-wallet"></i>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link py-3 border"
-                   th:href="@{/dashboard/myChat}" th:classappend="${menu} == 'myChat' ? 'active'">
-                    <i class="fas fa-comments"></i>
                 </a>
             </li>
         </ul>

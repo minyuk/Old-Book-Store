@@ -27,4 +27,9 @@ public class MyPageController {
     public String myFavorites() {
         return "my/favorites";
     }
+
+    @GetMapping("/orders")
+    public String myOrders() {
+        return "my/orders";
+    }
 }
