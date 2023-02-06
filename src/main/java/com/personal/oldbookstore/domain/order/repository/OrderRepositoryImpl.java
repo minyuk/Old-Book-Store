@@ -20,12 +20,13 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Order> findAll(Pageable pageable) {
+    public Page<Order> findAllByUserId(Long userId, Pageable pageable) {
         List<Order> orders = queryFactory.selectFrom(order)
                 .join(order.orderItems, orderItem)
                 .fetchJoin()
                 .join(orderItem.item, item)
                 .fetchJoin()
+                .where(order.user.id.eq(userId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(order.id.desc())

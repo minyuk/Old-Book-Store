@@ -36,19 +36,6 @@ public class OrderService {
 
     private final BasketRepository basketRepository;
 
-    public Page<OrderListResponseDto> getList(Pageable pageable) {
-        return orderRepository.findAll(pageable).map(Order::toDtoList);
-    }
-
-    public OrderResponseDto get(Long orderId) {
-        return findOrder(orderId).toDto();
-    }
-
-
-    public void cancel(Long orderId) {
-        findOrder(orderId).cancel();
-    }
-
     public Long create(PrincipalDetails principalDetails, OrderRequestDto dto) {
 
         List<OrderItem> orderItems = createOrderItems(dto);
@@ -65,6 +52,19 @@ public class OrderService {
         deleteBasket(principalDetails.getUser(), orderItems);
 
         return orderRepository.save(order).getId();
+    }
+
+    public Page<OrderListResponseDto> getList(PrincipalDetails principalDetails, Pageable pageable) {
+        return orderRepository.findAllByUserId(principalDetails.getUser().getId(), pageable).map(Order::toDtoList);
+    }
+
+    public OrderResponseDto get(Long orderId) {
+        return findOrder(orderId).toDto();
+    }
+
+
+    public void cancel(Long orderId) {
+        findOrder(orderId).cancel();
     }
 
     public List<BasketResponseDto> getBasketList(List<Long> itemIds) {

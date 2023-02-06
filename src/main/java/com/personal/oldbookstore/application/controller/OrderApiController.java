@@ -27,8 +27,9 @@ public class OrderApiController {
     private final OrderService orderService;
 
     @GetMapping("")
-    public Page<OrderListResponseDto> getList(Pageable pageable) {
-        return orderService.getList(pageable);
+    public Page<OrderListResponseDto> getList(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                              Pageable pageable) {
+        return orderService.getList(principalDetails, pageable);
     }
 
     @GetMapping("/{orderId}")
