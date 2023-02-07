@@ -53,7 +53,7 @@ public class ItemServiceTest {
 
     private User user;
     private PrincipalDetails principalDetails;
-    private List<OrderItem> orderItems = new ArrayList<>();
+    private final List<OrderItem> orderItems = new ArrayList<>();
 
     @BeforeEach
     void createUser() {
