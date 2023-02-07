@@ -3,10 +3,7 @@ package com.personal.oldbookstore.domain.item.entity;
 import com.personal.oldbookstore.domain.base.BaseTimeEntity;
 import com.personal.oldbookstore.domain.basket.entity.Basket;
 import com.personal.oldbookstore.domain.comment.entity.Comment;
-import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
-import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
-import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
-import com.personal.oldbookstore.domain.item.dto.ItemUpdateRequestDto;
+import com.personal.oldbookstore.domain.item.dto.*;
 import com.personal.oldbookstore.domain.like.entity.LikeItem;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.util.exception.CustomException;
@@ -170,6 +167,14 @@ public class Item extends BaseTimeEntity {
                 .build();
     }
 
+    public ItemIndexResponseDto toDtoIndex() {
+        return ItemIndexResponseDto.builder()
+                .id(id)
+                .name(name)
+                .price(price)
+                .fileName(files.get(0).getFileName())
+                .build();
+    }
 
 
 

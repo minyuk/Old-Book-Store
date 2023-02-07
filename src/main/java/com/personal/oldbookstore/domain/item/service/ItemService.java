@@ -1,10 +1,7 @@
 package com.personal.oldbookstore.domain.item.service;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
-import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
-import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
-import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
-import com.personal.oldbookstore.domain.item.dto.ItemUpdateRequestDto;
+import com.personal.oldbookstore.domain.item.dto.*;
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.entity.ItemFile;
@@ -30,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -132,6 +130,19 @@ public class ItemService {
         }
 
         return itemRepository.findAllByUserId(principalDetails.getUser().getId(), pageable).map(Item::toDtoList);
+    }
+
+    public Map<String, List<ItemIndexResponseDto>> index() {
+        Map<String, List<ItemIndexResponseDto>> map = new HashMap<>();
+
+        for (Category category : Category.values()) {
+            List<Item> items = itemRepository.findAllByCategory(category.toString());
+            List<ItemIndexResponseDto> indexList = items.stream().map(Item::toDtoIndex).collect(Collectors.toList());
+
+            map.put(category.toString().toLowerCase(), indexList);
+        }
+
+        return map;
     }
 
     private void fileSave(Item item, List<MultipartFile> fileList) {

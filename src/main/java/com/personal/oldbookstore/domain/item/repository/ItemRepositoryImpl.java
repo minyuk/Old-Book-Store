@@ -60,6 +60,16 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
     }
 
     @Override
+    public List<Item> findAllByCategory(String category) {
+        return queryFactory.selectFrom(item)
+                .where(eqCategory(category))
+                .join(item.user, user)
+                .fetchJoin()
+                .orderBy(item.createdDate.desc())
+                .fetch();
+    }
+
+    @Override
     public Optional<Item> findByIdWithFetchJoinUser(Long id) {
         Item findItem = queryFactory.selectFrom(item)
                 .join(item.user, user)
