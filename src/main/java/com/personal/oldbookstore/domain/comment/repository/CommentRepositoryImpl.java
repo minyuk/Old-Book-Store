@@ -23,21 +23,13 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Comment> findAllByItemId(Long itemId, Pageable pageable) {
-        List<Comment> comments = queryFactory.selectFrom(comment)
+    public List<Comment> findAllByItemId(Long itemId) {
+        return queryFactory.selectFrom(comment)
                 .join(comment.user, user)
                 .fetchJoin()
                 .where(comment.item.id.eq(itemId))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .orderBy(comment.id.desc())
                 .fetch();
-
-        Long total = queryFactory.select(comment.count())
-                .from(comment)
-                .fetchOne();
-
-        return new PageImpl<>(comments, pageable, total);
     }
 
     @Override

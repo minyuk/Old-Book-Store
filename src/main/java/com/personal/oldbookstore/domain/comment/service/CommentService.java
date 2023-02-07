@@ -18,6 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -29,11 +32,6 @@ public class CommentService {
 
     public Page<CommentMyPageResponseDto> getMyList(PrincipalDetails principalDetails, Pageable pageable) {
         return commentRepository.findAllByUserId(principalDetails.getUser().getId(), pageable).map(Comment::toMyDto);
-    }
-
-
-    public Page<CommentResponseDto> getList(Long itemId, Pageable pageable) {
-        return commentRepository.findAllByItemId(itemId, pageable).map(Comment::toDto);
     }
 
     public CommentResponseDto create(PrincipalDetails principalDetails, Long itemId, CommentRequestDto dto) {
@@ -70,6 +68,10 @@ public class CommentService {
         validateUser(principalDetails.getUser(), comment.getUser());
 
         comment.updateViewStatusFalse();
+    }
+
+    public List<CommentResponseDto> getList(Long itemId) {
+        return commentRepository.findAllByItemId(itemId).stream().map(Comment::toDto).collect(Collectors.toList());
     }
 
     private void validateUser(User loginUser, User writer) {
