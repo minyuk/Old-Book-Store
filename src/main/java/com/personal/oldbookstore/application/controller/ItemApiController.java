@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class ItemApiController {
     @PostMapping("")
     public ResponseEntity<Long> create(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                        @Valid @RequestPart(value = "jsonData") ItemRequestDto dto,
-                                       @RequestPart(value = "fileList") List<MultipartFile> fileList) {
+                                       @RequestPart(value = "fileList") List<MultipartFile> fileList) throws IOException {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(itemService.create(principalDetails, dto, fileList));
     }
@@ -36,7 +37,7 @@ public class ItemApiController {
                        @AuthenticationPrincipal PrincipalDetails principalDetails,
                        @Valid @RequestPart(value = "jsonData") ItemUpdateRequestDto dto,
                        @RequestPart(value = "saveFileList", required = false) List<MultipartFile> saveFileList,
-                       @RequestPart(value = "removeFileList", required = false) List<String> removeFileList) {
+                       @RequestPart(value = "removeFileList", required = false) List<String> removeFileList) throws IOException{
         itemService.update(itemId, principalDetails, dto, saveFileList, removeFileList);
     }
 

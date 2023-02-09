@@ -18,26 +18,22 @@ public class ItemFile {
     private Long id;
 
     @Column(nullable = false)
-    private String filePath;
-
-    @Column(nullable = false)
-    private String fileName;
+    private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
 
     @Builder
-    public ItemFile(Long id, Item item, String path, String name) {
+    public ItemFile(Long id, Item item, String imageUrl) {
         this.id = id;
         this.item = item;
-        this.filePath = path;
-        this.fileName = name;
+        this.imageUrl = imageUrl;
     }
 
     public ItemFileResponseDto toDto() {
         return ItemFileResponseDto.builder()
-                .fileName(fileName)
+                .imageUrl(imageUrl)
                 .build();
     }
 }

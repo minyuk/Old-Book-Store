@@ -172,7 +172,7 @@ public class Item extends BaseTimeEntity {
                 .id(id)
                 .name(name)
                 .price(price)
-                .fileName(files.get(0).getFileName())
+                .imageUrl(files.get(0).getImageUrl())
                 .build();
     }
 

@@ -35,7 +35,7 @@ function replaceSlide(category, postList){
         if(i < postList.length){    //게시글이 10개미만이면 swiper 오류생김! 게시글이 있는 것만 내용 추가해준다
             name = postList[i].name;
             price = postList[i].price +"원";
-            var fileName = postList[i].fileName;
+            var fileName = postList[i].imageUrl;
             if(fileName.length != 0){
                 imgsrc = "/api/image/"+fileName;
             }

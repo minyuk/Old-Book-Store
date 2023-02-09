@@ -7,6 +7,6 @@ public record ItemIndexResponseDto(
         Long id,
         String name,
         Integer price,
-        String fileName
+        String imageUrl
 ) {
 }

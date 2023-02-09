@@ -23,6 +23,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -95,26 +97,6 @@ class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("상품 댓글 리스트 조회 성공 - 페이징")
-    void getListPage() {
-        //given
-        CommentRequestDto request1 = new CommentRequestDto(1, "책 상태가 궁금합니다.", null);
-        CommentResponseDto response1 = commentService.create(principalDetails, item.getId(), request1);
-        CommentRequestDto request2 = new CommentRequestDto(2, "책 상태가 궁금합니다.", response1.id());
-        commentService.create(principalDetails, item.getId(), request2);
-        CommentRequestDto request3 = new CommentRequestDto(3, "책 상태가 궁금합니다.", response1.id());
-        commentService.create(principalDetails, item.getId(), request3);
-
-        Pageable pageable = PageRequest.of(1, 2);
-
-        //when
-        Page<CommentResponseDto> comments = commentService.getList(item.getId(), pageable);
-
-        //then
-        assertThat(comments.get().count()).isEqualTo(1);
-    }
-
-    @Test
     @DisplayName("상품 댓글 리스트 조회 성공")
     void getList() {
         //given
@@ -125,13 +107,11 @@ class CommentServiceTest {
         CommentRequestDto request3 = new CommentRequestDto(3, "책 상태가 궁금합니다.", response1.id());
         commentService.create(principalDetails, item.getId(), request3);
 
-        Pageable pageable = PageRequest.of(0, 10);
-
         //when
-        Page<CommentResponseDto> comments = commentService.getList(item.getId(), pageable);
+        List<CommentResponseDto> comments = commentService.getList(item.getId());
 
         //then
-        assertThat(comments.get().count()).isEqualTo(3);
+        assertThat(comments.size()).isEqualTo(3);
     }
 
     @Test
