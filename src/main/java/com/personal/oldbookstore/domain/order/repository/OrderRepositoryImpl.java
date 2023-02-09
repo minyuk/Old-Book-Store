@@ -34,6 +34,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
 
         Long total = queryFactory.select(order.count())
                 .from(order)
+                .where(order.user.id.eq(userId))
                 .fetchOne();
 
         return new PageImpl<>(orders, pageable, total);

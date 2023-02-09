@@ -45,6 +45,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom{
 
         Long total = queryFactory.select(comment.count())
                 .from(comment)
+                .where(comment.user.id.eq(userId))
                 .fetchOne();
 
         return new PageImpl<>(comments, pageable, total);

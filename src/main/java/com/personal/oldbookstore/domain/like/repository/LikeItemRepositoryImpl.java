@@ -45,6 +45,7 @@ public class LikeItemRepositoryImpl implements LikeItemRepositoryCustom {
 
         Long total = queryFactory.select(likeItem.count())
                 .from(likeItem)
+                .where(likeItem.user.id.eq(id))
                 .fetchOne();
 
         return new PageImpl<>(likeItems, pageable, total);

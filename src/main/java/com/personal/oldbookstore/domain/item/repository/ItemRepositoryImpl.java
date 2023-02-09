@@ -53,6 +53,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
 
         Long total = queryFactory.select(item.count())
                 .from(item)
+                .where(item.user.id.eq(userId))
                 .fetchOne();
 
         return new PageImpl<>(items, pageable, total);
