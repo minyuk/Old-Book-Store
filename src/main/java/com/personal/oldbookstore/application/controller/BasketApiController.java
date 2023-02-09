@@ -1,7 +1,6 @@
 package com.personal.oldbookstore.application.controller;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
-import com.personal.oldbookstore.domain.basket.dto.BasketRequestDto;
 import com.personal.oldbookstore.domain.basket.dto.BasketResponseDto;
 import com.personal.oldbookstore.domain.basket.service.BasketService;
 import lombok.RequiredArgsConstructor;
@@ -31,18 +30,18 @@ public class BasketApiController {
         basketService.delete(principalDetails.getUser(), itemId);
     }
 
-    @PatchMapping("/items/{itemId}")
+    @PutMapping("/items/{itemId}/{count}")
     public void update(@PathVariable Long itemId,
-                       @AuthenticationPrincipal PrincipalDetails principalDetails,
-                       @RequestBody BasketRequestDto dto) {
-        basketService.update(principalDetails, itemId, dto);
+                       @PathVariable Integer count,
+                       @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        basketService.update(principalDetails, itemId, count);
     }
 
-    @PostMapping("/items/{itemId}")
+    @PostMapping("/items/{itemId}/{count}")
     public ResponseEntity<Long> create(@PathVariable Long itemId,
-                                       @AuthenticationPrincipal PrincipalDetails principalDetails,
-                                       @RequestBody BasketRequestDto dto) {
-        return ResponseEntity.status(HttpStatus.OK).body(basketService.create(principalDetails, itemId, dto));
+                                       @PathVariable Integer count,
+                                       @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ResponseEntity.status(HttpStatus.OK).body(basketService.create(principalDetails, itemId, count));
     }
 
 }

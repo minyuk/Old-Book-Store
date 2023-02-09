@@ -2,11 +2,14 @@ package com.personal.oldbookstore.domain.comment.repository;
 
 import com.personal.oldbookstore.domain.comment.entity.Comment;
 import com.personal.oldbookstore.domain.item.entity.QItem;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -20,21 +23,13 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Comment> findAllByItemId(Long itemId, Pageable pageable) {
-        List<Comment> comments = queryFactory.selectFrom(comment)
+    public List<Comment> findAllByItemId(Long itemId) {
+        return queryFactory.selectFrom(comment)
                 .join(comment.user, user)
                 .fetchJoin()
                 .where(comment.item.id.eq(itemId))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .orderBy(comment.id.desc())
                 .fetch();
-
-        Long total = queryFactory.select(comment.count())
-                .from(comment)
-                .fetchOne();
-
-        return new PageImpl<>(comments, pageable, total);
     }
 
     @Override
@@ -45,7 +40,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom{
                 .where(comment.user.id.eq(userId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(comment.createdDate.desc())
+                .orderBy(sort(pageable))
                 .fetch();
 
         Long total = queryFactory.select(comment.count())
@@ -53,5 +48,30 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom{
                 .fetchOne();
 
         return new PageImpl<>(comments, pageable, total);
+    }
+
+    private OrderSpecifier<?> sort(Pageable pageable){
+        if(pageable.getSort().isEmpty()){
+            return new OrderSpecifier<>(Order.DESC, item.id);
+        }
+
+        Sort sort = pageable.getSort();
+        String field = "";
+        Order direction = null;
+
+        //sort가 여러개일 경우
+        for (Sort.Order order : sort) {
+            field = order.getProperty();
+            direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
+
+            switch (field){
+                case "name" : return new OrderSpecifier(direction, item.name);
+                case "saleStatus" : return new OrderSpecifier(direction, item.saleStatus);
+                case "contents" : return new OrderSpecifier(direction, comment.contents);
+                case "createdDate" : return new OrderSpecifier(direction, item.createdDate);
+            }
+        }
+
+        return null;
     }
 }

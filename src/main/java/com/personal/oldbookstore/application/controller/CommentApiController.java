@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/comments")
@@ -27,12 +28,6 @@ public class CommentApiController {
     public Page<CommentMyPageResponseDto> getMyList(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                                     Pageable pageable) {
         return commentService.getMyList(principalDetails, pageable);
-    }
-
-    @GetMapping("/items/{itemId}")
-    public Page<CommentResponseDto> getList(@PathVariable Long itemId,
-                                            Pageable pageable) {
-        return commentService.getList(itemId, pageable);
     }
 
     @PostMapping("/items/{itemId}")
@@ -53,6 +48,11 @@ public class CommentApiController {
     public void delete(@PathVariable Long commentId,
                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
         commentService.delete(principalDetails, commentId);
+    }
+
+    @GetMapping("/items/{itemId}")
+    public List<CommentResponseDto> getList(@PathVariable Long itemId) {
+        return commentService.getList(itemId);
     }
 
 }

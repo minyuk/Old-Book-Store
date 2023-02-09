@@ -13,7 +13,7 @@ public record OrderResponseDto(
         String recipient,
         String phone,
         Address address,
-        Payment payment,
+        String payment,
         OrderStatus orderStatus,
         String orderDate,
         List<OrderItemResponseDto> orderItemResponseDtos,

@@ -45,6 +45,7 @@ public class OrderItem extends BaseTimeEntity {
     public OrderItemResponseDto toDto() {
         return OrderItemResponseDto.builder()
                 .id(id)
+                .itemId(item.getId())
                 .name(item.getName())
                 .bookTitle(item.getBookTitle())
                 .itemPrice(item.getPrice())

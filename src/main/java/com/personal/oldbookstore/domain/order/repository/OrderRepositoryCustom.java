@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface OrderRepositoryCustom {
 
-    Page<Order> findAll(Pageable pageable);
+    Page<Order> findAllByUserId(Long userId, Pageable pageable);
     List<Order> findAllByItemId(Long itemId);
     Optional<Order> findByIdWithFetchJoinOrderItem(Long id);
 }

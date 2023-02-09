@@ -47,7 +47,7 @@ public class UserServiceTest {
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            userService.updateNickname(1L, new UserNicknameDto("tester"));
+            userService.updateNickname(0L, new UserNicknameDto("tester"));
         });
     }
 

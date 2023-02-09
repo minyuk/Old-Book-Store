@@ -71,7 +71,7 @@ public class Order extends BaseTimeEntity {
                 .recipient(recipient)
                 .phone(phone)
                 .address(address)
-                .payment(payment)
+                .payment(payment.getValue())
                 .orderStatus(orderStatus)
                 .orderDate(orderDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))
                 .totalPrice(getTotalPrice())

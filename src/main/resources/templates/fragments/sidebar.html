@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/sidebar.css">
+</head>
+<body>
+
+<th:block th:fragment="sidebar(menu)">
+    <div class="sidebar">
+        <ul class="nav nav-pills ms-2 mt-2 me-2">
+            <li>
+                <a href="#" class="nav-link"
+                   th:href="@{/my/info}" th:classappend="${menu} == 'myInfo' ? 'active'">
+                    <i class="fas fa-user-circle"></i> 내 정보
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link"
+                   th:href="@{/my/items(page=1)}" th:classappend="${menu} == 'myItems' ? 'active'">
+                    <i class="fas fa-file-alt"></i> 판매내역
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link"
+                   th:href="@{/my/orders(page=1)}" th:classappend="${menu} == 'myOrders' ? 'active'">
+                    <i class="fas fa-wallet"></i> 구매내역
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link"
+                   th:href="@{/my/comments(page=1)}" th:classappend="${menu} == 'myComments' ? 'active'">
+                    <i class="fas fa-comment"></i> 내 댓글
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link"
+                   th:href="@{/my/favorites(page=1)}" th:classappend="${menu} == 'myFavorites' ? 'active'">
+                    <i class="fas fa-heart"></i> 관심상품
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" th:href="@{/basket}" th:classappend="${menu} == 'myBasket' ? 'active'">
+                    <i class="fas fa-shopping-basket"></i> 장바구니
+                </a>
+            </li>
+
+        </ul>
+    </div>
+
+
+
+    <div class="sidebar mobile" style="width: 4rem;">
+        <ul class="nav nav-pills text-center">
+            <li>
+                <a href="#" class="nav-link py-3 border"
+                   th:href="@{/my/info}" th:classappend="${menu} == 'myInfo' ? 'active'">
+                    <i class="fas fa-user-circle"></i>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link py-3 border"
+                   th:href="@{/my/items(page=1)}" th:classappend="${menu} == 'myItems' ? 'active'">
+                    <i class="fas fa-file-alt"></i>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link py-3 border"
+                   th:href="@{/my/comments(page=1)}" th:classappend="${menu} == 'myComments' ? 'active'">
+                    <i class="fas fa-comment"></i>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link py-3 border"
+                   th:href="@{/my/favorites(page=1)}" th:classappend="${menu} == 'myFavorites' ? 'active'">
+                    <i class="fas fa-heart"></i>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link py-3 border"
+                   th:href="@{/basket}" th:classappend="${menu} == 'myBasket' ? 'active'">
+                    <i class="fas fa-shopping-basket"></i>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link py-3 border"
+                   th:href="@{/my/orders(page=1)}" th:classappend="${menu} == 'myOrders' ? 'active'">
+                    <i class="fas fa-wallet"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</th:block>
+</body>
+</html>

@@ -1,11 +1,14 @@
 package com.personal.oldbookstore.domain.like.repository;
 
 import com.personal.oldbookstore.domain.like.entity.LikeItem;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +40,7 @@ public class LikeItemRepositoryImpl implements LikeItemRepositoryCustom {
                 .where(likeItem.user.id.eq(id))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(likeItem.id.desc())
+                .orderBy(sort(pageable))
                 .fetch();
 
         Long total = queryFactory.select(likeItem.count())
@@ -56,5 +59,30 @@ public class LikeItemRepositoryImpl implements LikeItemRepositoryCustom {
                 .fetchOne();
 
         return Optional.ofNullable(findLikeItem);
+    }
+
+    private OrderSpecifier<?> sort(Pageable pageable){
+        if(pageable.getSort().isEmpty()){
+            return new OrderSpecifier<>(Order.DESC, item.id);
+        }
+
+        Sort sort = pageable.getSort();
+        String field = "";
+        Order direction = null;
+
+        //sort가 여러개일 경우
+        for (Sort.Order order : sort) {
+            field = order.getProperty();
+            direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
+
+            switch (field){
+                case "name" : return new OrderSpecifier(direction, item.name);
+                case "saleStatus" : return new OrderSpecifier(direction, item.saleStatus);
+                case "bookTitle" : return new OrderSpecifier(direction, item.bookTitle);
+                case "price" : return new OrderSpecifier(direction, item.price);
+            }
+        }
+
+        return null;
     }
 }

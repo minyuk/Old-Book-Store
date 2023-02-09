@@ -4,8 +4,10 @@ import com.personal.oldbookstore.config.auth.PrincipalDetails;
 import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
 import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
 import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
+import com.personal.oldbookstore.domain.item.dto.ItemUpdateRequestDto;
 import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
+import com.personal.oldbookstore.domain.item.entity.SaleStatus;
 import com.personal.oldbookstore.domain.item.repository.ItemFileRepository;
 import com.personal.oldbookstore.domain.item.repository.ItemRepository;
 import com.personal.oldbookstore.domain.order.entity.Order;
@@ -25,8 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,7 +53,7 @@ public class ItemServiceTest {
 
     private User user;
     private PrincipalDetails principalDetails;
-    private List<OrderItem> orderItems = new ArrayList<>();
+    private final List<OrderItem> orderItems = new ArrayList<>();
 
     @BeforeEach
     void createUser() {
@@ -75,10 +76,17 @@ public class ItemServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<ItemListResponseDto> items = itemService.getList(pageable, "TEST", "abc");
+        Map<String, Object> items = itemService.getList(pageable, "TEST", "abc");
 
         //then
-        assertThat(items.get().count()).isEqualTo(1);
+        assertThat(items.get("category")).isEqualTo("테스트");
+
+        List<ItemListResponseDto> list = new ArrayList<>();
+        for (ItemListResponseDto response : (Page<ItemListResponseDto>) items.get("pagination")) {
+            list.add(response);
+        }
+
+        assertThat(list.size()).isEqualTo(1);
     }
 
     @Test
@@ -100,10 +108,17 @@ public class ItemServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<ItemListResponseDto> items = itemService.getList(pageable, null, "abc");
+        Map<String, Object> items = itemService.getList(pageable, null, "abc");
 
         //then
-        assertThat(items.get().count()).isEqualTo(2);
+        assertThat(items.get("category")).isEqualTo("통합검색");
+
+        List<ItemListResponseDto> list = new ArrayList<>();
+        for (ItemListResponseDto response : (Page<ItemListResponseDto>) items.get("pagination")) {
+            list.add(response);
+        }
+
+        assertThat(list.size()).isEqualTo(2);
     }
 
     @Test
@@ -121,10 +136,17 @@ public class ItemServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<ItemListResponseDto> items = itemService.getList(pageable, "TEST", null);
+        Map<String, Object> items = itemService.getList(pageable, "TEST", null);
 
         //then
-        assertThat(items.get().count()).isEqualTo(1);
+        assertThat(items.get("category")).isEqualTo("테스트");
+
+        List<ItemListResponseDto> list = new ArrayList<>();
+        for (ItemListResponseDto response : (Page<ItemListResponseDto>) items.get("pagination")) {
+            list.add(response);
+        }
+
+        assertThat(list.size()).isEqualTo(1);
     }
 
     @Test
@@ -142,10 +164,17 @@ public class ItemServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        Page<ItemListResponseDto> items = itemService.getList(pageable, "TEST", null);
+        Map<String, Object> items = itemService.getList(pageable, "TEST", null);
 
         //then
-        assertThat(items.get().count()).isEqualTo(2);
+        assertThat(items.get("category")).isEqualTo("테스트");
+
+        List<ItemListResponseDto> list = new ArrayList<>();
+        for (ItemListResponseDto response : (Page<ItemListResponseDto>) items.get("pagination")) {
+            list.add(response);
+        }
+
+        assertThat(list.size()).isEqualTo(2);
     }
 
     @Test
@@ -203,8 +232,8 @@ public class ItemServiceTest {
 
         User user2 = saveUser("test2@efg.com", "1111!!!", "tester2");
         PrincipalDetails principalDetails2 = new PrincipalDetails(user2);
-        ItemRequestDto update = createItem("updateTesting", "TEST", "test123", "tester1",
-                "goodbb", 1, 7000);
+        ItemUpdateRequestDto update = createUpdateItem("updateTesting", "TEST", "test123", "tester1",
+                "goodbb", 1, 7000, "SALE");
 
         //when
         //then
@@ -220,10 +249,13 @@ public class ItemServiceTest {
         ItemRequestDto request = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
 
+        ItemUpdateRequestDto update = createUpdateItem("updateTesting", "TEST", "test123", "tester1",
+                "goodbb", 1, 7000, "SALE");
+
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            itemService.update(0L, principalDetails, request, null, null);
+            itemService.update(0L, principalDetails, update, null, null);
         });
     }
 
@@ -236,8 +268,8 @@ public class ItemServiceTest {
 
         Long itemId = itemService.create(principalDetails, request, null);
 
-        ItemRequestDto update = createItem("updateTesting", "TEST", "test123", "tester1",
-                "goodbb", 1, 7000);
+        ItemUpdateRequestDto update = createUpdateItem("updateTesting", "TEST", "test123", "tester1",
+                "goodbb", 1, 7000, "SALE");
 
         //when
         itemService.update(itemId, principalDetails, update, null, null);
@@ -369,6 +401,20 @@ public class ItemServiceTest {
                 .contents(contents)
                 .stock(stock)
                 .price(price)
+                .build();
+    }
+
+    private ItemUpdateRequestDto createUpdateItem(String name, String category, String bookTitle, String bookAuthor,
+                                            String contents, Integer stock, Integer price, String saleStatus) {
+        return ItemUpdateRequestDto.builder()
+                .name(name)
+                .category(Category.valueOf(category))
+                .bookTitle(bookTitle)
+                .bookAuthor(bookAuthor)
+                .contents(contents)
+                .stock(stock)
+                .price(price)
+                .saleStatus(SaleStatus.valueOf(saleStatus))
                 .build();
     }
 }

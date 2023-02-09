@@ -7,6 +7,7 @@ public record CommentMyPageResponseDto(
         Long itemId,
         String itemName,
         String contents,
-        String createdDate
+        String createdDate,
+        String saleStatus
 ) {
 }

@@ -11,6 +11,7 @@ public record ItemListResponseDto(
         String name,
         String category,
         Long viewCount,
+        Long commentCount,
         String saleStatus,
         String createdDate
 ) {

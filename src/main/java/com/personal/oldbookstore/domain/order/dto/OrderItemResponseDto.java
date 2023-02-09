@@ -5,6 +5,7 @@ import lombok.Builder;
 @Builder
 public record OrderItemResponseDto(
         Long id,
+        Long itemId,
         String name,
         String bookTitle,
         Integer itemPrice,

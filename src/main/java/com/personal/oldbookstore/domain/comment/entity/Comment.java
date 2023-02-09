@@ -68,6 +68,7 @@ public class Comment extends BaseTimeEntity {
                 .itemId(item.getId())
                 .itemName(item.getName())
                 .contents(contents)
+                .saleStatus(item.getSaleStatus().getValue())
                 .createdDate(getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .build();
     }

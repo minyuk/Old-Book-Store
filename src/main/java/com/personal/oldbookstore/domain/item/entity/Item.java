@@ -3,9 +3,7 @@ package com.personal.oldbookstore.domain.item.entity;
 import com.personal.oldbookstore.domain.base.BaseTimeEntity;
 import com.personal.oldbookstore.domain.basket.entity.Basket;
 import com.personal.oldbookstore.domain.comment.entity.Comment;
-import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
-import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
-import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
+import com.personal.oldbookstore.domain.item.dto.*;
 import com.personal.oldbookstore.domain.like.entity.LikeItem;
 import com.personal.oldbookstore.domain.user.entity.User;
 import com.personal.oldbookstore.util.exception.CustomException;
@@ -58,6 +56,8 @@ public class Item extends BaseTimeEntity {
 
     private Long likeCount;
 
+    private Long commentCount;
+
     @Enumerated(EnumType.STRING)
     private SaleStatus saleStatus;
 
@@ -78,7 +78,8 @@ public class Item extends BaseTimeEntity {
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Item(User user, String name, Category category, String bookTitle, String bookAuthor, String contents, Integer stock, Integer price, Long viewCount, Long likeCount, SaleStatus saleStatus) {
+    public Item(User user, String name, Category category, String bookTitle, String bookAuthor, String contents,
+                Integer stock, Integer price, Long viewCount, Long likeCount, Long commentCount, SaleStatus saleStatus) {
         this.user = user;
         this.name = name;
         this.category = category;
@@ -89,6 +90,7 @@ public class Item extends BaseTimeEntity {
         this.price = price;
         this.viewCount = viewCount == null ? 0 : viewCount;
         this.likeCount = likeCount == null ? 0 : likeCount;
+        this.commentCount = commentCount == null ? 0 : commentCount;
         this.saleStatus = saleStatus == null ? SaleStatus.SALE : saleStatus;
     }
 
@@ -113,12 +115,16 @@ public class Item extends BaseTimeEntity {
 
     public void decreaseLikeCount() { likeCount--; }
 
+    public void incrementCommentCount() {
+        commentCount++;
+    }
+
     public void updateSaleStatus() {
         if (stock > 0) saleStatus = SaleStatus.SALE;
         else saleStatus = SaleStatus.SOLD_OUT;
     }
 
-    public void updateItem(ItemRequestDto dto) {
+    public void updateItem(ItemUpdateRequestDto dto) {
         this.name = dto.name();
         this.category = dto.category();
         this.bookTitle = dto.bookTitle();
@@ -126,6 +132,7 @@ public class Item extends BaseTimeEntity {
         this.contents = dto.contents();
         this.stock = dto.stock();
         this.price = dto.price();
+        this.saleStatus = dto.saleStatus();
     }
 
     public ItemResponseDto toDto() {
@@ -140,8 +147,10 @@ public class Item extends BaseTimeEntity {
                 .stock(stock)
                 .price(price)
                 .viewCount(viewCount)
+                .likeCount(likeCount)
                 .saleStatus(getSaleStatus().getValue())
                 .createdDate(getModifiedDate())
+                .files(files.stream().map(ItemFile::toDto).toList())
                 .build();
     }
 
@@ -152,11 +161,20 @@ public class Item extends BaseTimeEntity {
                 .name(name)
                 .category(getCategory().getValue())
                 .viewCount(viewCount)
+                .commentCount(commentCount)
                 .saleStatus(getSaleStatus().getValue())
                 .createdDate(getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))
                 .build();
     }
 
+    public ItemIndexResponseDto toDtoIndex() {
+        return ItemIndexResponseDto.builder()
+                .id(id)
+                .name(name)
+                .price(price)
+                .fileName(files.get(0).getFileName())
+                .build();
+    }
 
 
 

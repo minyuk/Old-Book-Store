@@ -8,6 +8,8 @@ public record LikeItemResponseDto(
         Long itemId,
         String name,
         String bookTitle,
-        Integer price
+        Integer price,
+        String saleStatus,
+        String category
 ) {
 }

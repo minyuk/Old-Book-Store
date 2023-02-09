@@ -1,7 +1,6 @@
 package com.personal.oldbookstore.domain.basket.service;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
-import com.personal.oldbookstore.domain.basket.dto.BasketRequestDto;
 import com.personal.oldbookstore.domain.basket.dto.BasketResponseDto;
 import com.personal.oldbookstore.domain.basket.entity.Basket;
 import com.personal.oldbookstore.domain.basket.repository.BasketRepository;
@@ -33,14 +32,14 @@ public class BasketService {
         basketRepository.deleteByUserIdAndItemId(user.getId(), itemId);
     }
 
-    public void update(PrincipalDetails principalDetails, Long itemId, BasketRequestDto dto) {
+    public void update(PrincipalDetails principalDetails, Long itemId, Integer count) {
         Basket basket = basketRepository.findByUserIdAndItemId(principalDetails.getUser().getId(), itemId).orElseThrow(() ->
                 new CustomException(ErrorCode.ID_NOT_FOUND));
 
-        basket.updateCount(dto.count());
+        basket.updateCount(count);
     }
 
-    public Long create(PrincipalDetails principalDetails, Long itemId, BasketRequestDto dto) {
+    public Long create(PrincipalDetails principalDetails, Long itemId, Integer count) {
         if (principalDetails == null) {
             throw new CustomException(ErrorCode.ONLY_USER);
         }
@@ -52,7 +51,7 @@ public class BasketService {
         Basket basket = Basket.builder()
                 .user(principalDetails.getUser())
                 .item(findItem(itemId))
-                .count(dto.count())
+                .count(count)
                 .build();
 
         return basketRepository.save(basket).getId();

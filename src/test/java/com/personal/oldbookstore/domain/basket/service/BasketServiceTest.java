@@ -2,7 +2,6 @@ package com.personal.oldbookstore.domain.basket.service;
 
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
-import com.personal.oldbookstore.domain.basket.dto.BasketRequestDto;
 import com.personal.oldbookstore.domain.basket.dto.BasketResponseDto;
 import com.personal.oldbookstore.domain.basket.entity.Basket;
 import com.personal.oldbookstore.domain.basket.repository.BasketRepository;
@@ -55,12 +54,10 @@ class BasketServiceTest {
     void getListPage() {
         //given
         Item item1 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-        BasketRequestDto dto1 = new BasketRequestDto(1);
-        basketService.create(principalDetails, item1.getId(), dto1);
+        basketService.create(principalDetails, item1.getId(), 1);
 
         Item item2 = saveItem(user, "Test", "IT", "testing", "tester", "test", 100, 10000);
-        BasketRequestDto dto2 = new BasketRequestDto(1);
-        basketService.create(principalDetails, item2.getId(), dto2);
+        basketService.create(principalDetails, item2.getId(), 1);
 
         Pageable pageable = PageRequest.of(1, 1);
 
@@ -76,12 +73,10 @@ class BasketServiceTest {
     void getList() {
         //given
         Item item1 = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-        BasketRequestDto dto1 = new BasketRequestDto(1);
-        basketService.create(principalDetails, item1.getId(), dto1);
+        basketService.create(principalDetails, item1.getId(), 1);
 
         Item item2 = saveItem(user, "Test", "IT", "testing", "tester", "test", 100, 10000);
-        BasketRequestDto dto2 = new BasketRequestDto(1);
-        basketService.create(principalDetails, item2.getId(), dto2);
+        basketService.create(principalDetails, item2.getId(), 1);
 
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -97,8 +92,7 @@ class BasketServiceTest {
     void delete() {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-        BasketRequestDto createDto = new BasketRequestDto(1);
-        Long basketId = basketService.create(principalDetails, item.getId(), createDto);
+        Long basketId = basketService.create(principalDetails, item.getId(), 1);
 
         //when
         basketService.delete(user, item.getId());
@@ -112,15 +106,13 @@ class BasketServiceTest {
     void updateNotFound() {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-        BasketRequestDto createDto = new BasketRequestDto(1);
-        basketService.create(principalDetails, item.getId(), createDto);
+        basketService.create(principalDetails, item.getId(), 1);
 
-        BasketRequestDto updateDto = new BasketRequestDto(10);
 
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            basketService.update(principalDetails, 10L, updateDto);
+            basketService.update(principalDetails, 0L, 10);
         });
     }
 
@@ -129,13 +121,10 @@ class BasketServiceTest {
     void update() {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-        BasketRequestDto createDto = new BasketRequestDto(1);
-        basketService.create(principalDetails, item.getId(), createDto);
-
-        BasketRequestDto updateDto = new BasketRequestDto(10);
+        basketService.create(principalDetails, item.getId(), 1);
 
         //when
-        basketService.update(principalDetails, item.getId(), updateDto);
+        basketService.update(principalDetails, item.getId(), 10);
 
         //then
         Basket basket = basketRepository.findByUserIdAndItemId(user.getId(), item.getId()).orElse(null);
@@ -147,13 +136,12 @@ class BasketServiceTest {
     void createExistItem() {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-        BasketRequestDto dto = new BasketRequestDto(1);
-        basketService.create(principalDetails, item.getId(), dto);
+        basketService.create(principalDetails, item.getId(), 1);
 
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            basketService.create(principalDetails, item.getId(), dto);
+            basketService.create(principalDetails, item.getId(), 1);
         });
     }
 
@@ -162,12 +150,11 @@ class BasketServiceTest {
     void createOnlyUser() {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-        BasketRequestDto dto = new BasketRequestDto(1);
 
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            basketService.create(null, item.getId(), dto);
+            basketService.create(null, item.getId(), 1);
         });
     }
 
@@ -175,12 +162,10 @@ class BasketServiceTest {
     @DisplayName("장바구니 등록 실패 - 존재하지 않는 상품")
     void createNotFound() {
         //given
-        BasketRequestDto dto = new BasketRequestDto(1);
-
         //when
         //then
         assertThrows(CustomException.class, () -> {
-            basketService.create(principalDetails, 1L, dto);
+            basketService.create(principalDetails, 0L, 1);
         });
     }
 
@@ -189,10 +174,9 @@ class BasketServiceTest {
     void create() {
         //given
         Item item = saveItem(user, "자바 팔아요", "IT", "Java의 정석", "남궁성", "깨끗해요", 100, 10000);
-        BasketRequestDto dto = new BasketRequestDto(1);
 
         //when
-        basketService.create(principalDetails, item.getId(), dto);
+        basketService.create(principalDetails, item.getId(), 1);
 
         //then
         Basket basket = basketRepository.findByUserIdAndItemId(user.getId(), item.getId()).orElse(null);

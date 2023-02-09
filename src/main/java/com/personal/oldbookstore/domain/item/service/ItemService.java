@@ -1,9 +1,8 @@
 package com.personal.oldbookstore.domain.item.service;
 
 import com.personal.oldbookstore.config.auth.PrincipalDetails;
-import com.personal.oldbookstore.domain.item.dto.ItemListResponseDto;
-import com.personal.oldbookstore.domain.item.dto.ItemRequestDto;
-import com.personal.oldbookstore.domain.item.dto.ItemResponseDto;
+import com.personal.oldbookstore.domain.item.dto.*;
+import com.personal.oldbookstore.domain.item.entity.Category;
 import com.personal.oldbookstore.domain.item.entity.Item;
 import com.personal.oldbookstore.domain.item.entity.ItemFile;
 import com.personal.oldbookstore.domain.item.repository.ItemFileRepository;
@@ -27,8 +26,8 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,23 +41,6 @@ public class ItemService {
 
     @Value("${file.dir}")
     private String imgUploadPath;
-
-    public Page<ItemListResponseDto> getList(Pageable pageable, String category, String keyword) {
-        return itemRepository.findAllBySearchOption(pageable, category, keyword).map(Item::toDtoList);
-    }
-
-    public ItemResponseDto get(PrincipalDetails principalDetails, Long itemId) {
-        Item item = findItem(itemId);
-
-        item.incrementViewCount();
-
-        ItemResponseDto itemResponseDto = item.toDto();
-        if (principalDetails != null) {
-            itemResponseDto.setLikeStatus(likeItemRepository.findByUserIdAndItemId(principalDetails.getUser().getId(), itemId).isPresent());
-        }
-
-        return itemResponseDto;
-    }
 
     public Long create(PrincipalDetails principalDetails, ItemRequestDto dto, List<MultipartFile> fileList) {
         Item item = Item.builder()
@@ -77,7 +59,7 @@ public class ItemService {
         return itemRepository.save(item).getId();
     }
 
-    public void update(Long itemId, PrincipalDetails principalDetails, ItemRequestDto dto,
+    public void update(Long itemId, PrincipalDetails principalDetails, ItemUpdateRequestDto dto,
                        List<MultipartFile> saveFileList, List<String> removeFileList) {
         Item item = findItem(itemId);
 
@@ -103,6 +85,64 @@ public class ItemService {
         }
 
         itemRepository.delete(item);
+    }
+
+    public ItemResponseDto get(PrincipalDetails principalDetails, Long itemId) {
+        Item item = findItem(itemId);
+
+        item.incrementViewCount();
+
+        ItemResponseDto itemResponseDto = item.toDto();
+        if (principalDetails != null) {
+
+            if (item.getUser().getEmail().equals(principalDetails.getUser().getEmail())) {
+                itemResponseDto.isSeller();
+            }
+
+            itemResponseDto.setLikeStatus(
+                    likeItemRepository.findByUserIdAndItemId(principalDetails.getUser().getId(), itemId).isPresent()
+            );
+
+        }
+
+        return itemResponseDto;
+    }
+
+    public Map<String, Object> getList(Pageable pageable, String category, String keyword) {
+        Page<ItemListResponseDto> items = itemRepository.findAllBySearchOption(pageable, category, keyword).map(Item::toDtoList);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("pagination", items);
+
+        if(category == null) {
+            category = "통합검색";
+        } else {
+            category = Category.valueOf(category).getValue();
+        };
+        map.put("category", category);
+
+        return map;
+    }
+
+    public Page<ItemListResponseDto> getMyList(PrincipalDetails principalDetails, Pageable pageable) {
+        if (principalDetails == null) {
+            throw new CustomException(ErrorCode.ONLY_USER);
+        }
+
+        return itemRepository.findAllByUserId(principalDetails.getUser().getId(), pageable).map(Item::toDtoList);
+    }
+
+    public Map<String, List<ItemIndexResponseDto>> index() {
+        Map<String, List<ItemIndexResponseDto>> map = new HashMap<>();
+
+        for (Category category : Category.values()) {
+            List<Item> items = itemRepository.findAllByCategory(category.toString());
+            List<ItemIndexResponseDto> indexList = items.stream().map(Item::toDtoIndex).collect(Collectors.toList());
+
+            map.put(category.toString().toLowerCase(), indexList);
+        }
+
+        return map;
     }
 
     private void fileSave(Item item, List<MultipartFile> fileList) {
