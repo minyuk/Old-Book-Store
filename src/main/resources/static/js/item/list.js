@@ -22,7 +22,7 @@ function loadList(e_id, e_class){
         url: "/api/items?"+ urlParams,
         type: "get",
         success: function(data){
-//            $(".head .categoryName").text(data.category);
+            $(".head .categoryName").text(data.category);
 
             if(urlParams.get("keyword") != null){
                 replaceSearch();

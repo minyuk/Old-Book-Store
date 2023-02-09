@@ -14,7 +14,7 @@ function registerSubmit() {
         data: JSON.stringify(data)
     }).done(function(){
         alert('회원가입이 완료되었습니다.');
-        window.location.href = '/';
+        window.location.href = '/login';
     }).fail(function(error) {
         alert(JSON.stringify(error["responseJSON"].message));
     });

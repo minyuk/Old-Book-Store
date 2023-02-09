@@ -41,6 +41,7 @@ public class BasketRepositoryImpl implements BasketRepositoryCustom{
 
         Long total = queryFactory.select(basket.count())
                 .from(basket)
+                .where(basket.user.id.eq(id))
                 .fetchOne();
 
         return new PageImpl<>(baskets, pageable, total);
