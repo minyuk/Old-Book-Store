@@ -27,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +64,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 리스트 조회 - 카테고리 and 키워드 검색")
-    void getListCategoryAndKeyword() {
+    void getListCategoryAndKeyword() throws IOException {
         //given
         ItemRequestDto request1 = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
@@ -91,7 +92,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 리스트 조회 - 키워드(상품명 or 도서명 or 도서 저자) 검색")
-    void getListKeyword() {
+    void getListKeyword() throws IOException{
         //given
         ItemRequestDto request1 = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
@@ -123,7 +124,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 리스트 조회 - 카테고리")
-    void getListCategory() {
+    void getListCategory() throws IOException{
         //given
         ItemRequestDto request1 = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
@@ -151,7 +152,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 리스트 조회 성공")
-    void getList() {
+    void getList() throws IOException{
         //given
         ItemRequestDto request1 = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
@@ -179,7 +180,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 상세 조회 - 조회수 증가")
-    void getIncrementViewCount() {
+    void getIncrementViewCount() throws IOException{
         //given
         ItemRequestDto request = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
@@ -209,7 +210,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 상세 조회 성공")
-    void get() {
+    void get() throws IOException {
         //given
         ItemRequestDto request = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
@@ -224,7 +225,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 수정 실패 - 작성자 불일치")
-    void updateNotEqualUser() {
+    void updateNotEqualUser() throws IOException {
         //given
         ItemRequestDto request = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
@@ -261,7 +262,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 수정 성공")
-    void update() {
+    void update() throws IOException {
         //given
         ItemRequestDto request = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
@@ -281,7 +282,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 삭제 실패 - 주문 처리 된 상품")
-    void deleteExistOrder() {
+    void deleteExistOrder() throws IOException {
         //given
         ItemRequestDto request = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
@@ -300,7 +301,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 삭제 실패 - 작성자 불일치")
-    void deleteNotEqualUser() {
+    void deleteNotEqualUser() throws IOException {
         //given
         ItemRequestDto request = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
@@ -329,7 +330,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 삭제 성공")
-    void delete() {
+    void delete() throws IOException {
         //given
         ItemRequestDto request = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
@@ -346,7 +347,7 @@ public class ItemServiceTest {
 
     @Test
     @DisplayName("상품 등록 성공")
-    void create() {
+    void create() throws IOException {
         //given
         ItemRequestDto request = createItem("testing", "TEST", "test", "tester",
                 "good", 2, 5000);
