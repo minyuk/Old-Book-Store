@@ -113,31 +113,31 @@
         <hr style="margin-bottom:0px;">
 
 
-<!--        <div id="commentList">-->
-<!--        </div>-->
+        <div id="commentList">
+        </div>
 
-<!--        &lt;!&ndash; <form id="commentForm" class="row" th:if="${!session.loginMember eq null}">&ndash;&gt;-->
-<!--        <form id="commentForm" class="commentWriteForm">-->
-<!--            <div class="row">-->
-<!--                <div class="mb-2">-->
-<!--                    <i class="fas fa-user"></i>-->
-<!--                    <span class="commentWriter">익명사용자</span>-->
-<!--                </div>-->
+        <!-- <form id="commentForm" class="row" th:if="${!session.loginMember eq null}">-->
+        <form id="commentForm" class="commentWriteForm">
+            <div class="row">
+                <div class="mb-2">
+                    <i class="fas fa-user"></i>
+                    <span class="commentWriter">익명사용자</span>
+                </div>
 
-<!--                <div class="input-group">-->
-<!--                    <textarea class="form-control" rows="3"; name="content" placeholder="댓글 남기기" disabled>회원만 댓글을 남길 수 있습니다.</textarea>-->
-<!--                    <button class="btn btn-outline-primary" type="button" onclick="writeComment(null, event)" disabled>-->
-<!--                        <i class="fas fa-comments"></i>-->
-<!--                    </button>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </form>-->
+                <div class="input-group">
+                    <textarea class="form-control" rows="3"; name="contents" placeholder="댓글 남기기" disabled>회원만 댓글을 남길 수 있습니다.</textarea>
+                    <button class="btn btn-outline-primary" type="button" onclick="writeComment(null, event)" disabled>
+                        <i class="fas fa-comments"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
 
-<!--        <div class="row mt-3 mb-5">-->
-<!--            <div class="col text-end">-->
-<!--&lt;!&ndash;                <a class="btn btn-primary" href="/item/list" style="width:fit-content;">목록보기</a>&ndash;&gt;-->
-<!--            </div>-->
-<!--        </div>-->
+        <div class="row mt-3 mb-5">
+            <div class="col text-end">
+<!--                <a class="btn btn-primary" href="/item/list" style="width:fit-content;">목록보기</a>-->
+            </div>
+        </div>
 
     </div>
 </div>
@@ -178,7 +178,7 @@
 <th:block th:replace="fragments/slider.html :: slider-script"></th:block>
 <script src="/js/addComma.js"></script>
 <script src="/js/item/detail.js"></script>
-<!--<script src="/js/comment/comment.js"></script>-->
+<script src="/js/comment/comment.js"></script>
 <script src="/js/order/addBasket.js"></script>
 </body>
 </html>
