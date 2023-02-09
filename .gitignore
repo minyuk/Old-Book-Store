@@ -1,4 +1,5 @@
 uploadFile/
+firebaseKey.json
 application-oauth.yml
 application-dev.yml
 application-prod.yml
