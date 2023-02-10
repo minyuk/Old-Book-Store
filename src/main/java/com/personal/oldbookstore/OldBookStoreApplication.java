@@ -25,7 +25,7 @@ public class OldBookStoreApplication {
 	public PageableHandlerMethodArgumentResolverCustomizer customize() {
 		return p -> {
 			p.setOneIndexedParameters(true);
-			p.setMaxPageSize(5);
+			p.setMaxPageSize(10);
 		};
 	}
 
