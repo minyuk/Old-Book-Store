@@ -1,4 +1,4 @@
-config/
+serviceAccountKey.json
 uploadFile/
 firebaseKey.json
 application-oauth.yml
