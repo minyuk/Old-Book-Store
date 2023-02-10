@@ -26,7 +26,7 @@ public class SecurityConfig{
             "/",
             "/login", "/join", "/joinOk", "/findPass" +
             "word", "users/findPasswordEmailSend",
-            "/items/list", "/items/list/**", "/item/{itemId}"
+            "/item/list", "/item/list/**", "/item/{itemId}"
     };
 
     @Bean
