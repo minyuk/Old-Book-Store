@@ -10,7 +10,7 @@ public class MyPageController {
 
     @GetMapping("/info")
     public String myInfo() {
-        return "/my/info";
+        return "my/info";
     }
 
     @GetMapping("/items")
