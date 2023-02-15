@@ -22,7 +22,7 @@ public class SecurityConfig{
 
     private final String[] whitelist = {
             "/resources/**", "/css/**", "/js/**", "/img/**",
-            "/oauth2", "/api/**",
+            "/oauth2", "/api/**", "/profile",
             "/",
             "/login", "/join", "/joinOk", "/findPass" +
             "word", "users/findPasswordEmailSend",
