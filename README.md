@@ -1,7 +1,7 @@
 # 중고 도서 거래 [📚 헌책방]
 
 ### 🗂 Notion
-https://ordinary-octagon-9fd.notion.site/de876dcf159c409ab052698db1f8d14d
+https://ordinary-octagon-9fd.notion.site/91c3ee3d556e4c2f98049f3f74664cb7
 
 ### 🏷 목차
 - 프로젝트 소개
